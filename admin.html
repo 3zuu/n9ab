@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم — مين النصاب؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08080d;--surface:#111118;--card:#18181f;--card2:#1f1f2a;
+  --border:#25253a;--accent:#7b2ff7;--accent2:#ff4d6d;--accent3:#00d4aa;--accent4:#ffd60a;
+  --text:#f0f0ff;--muted:#6a6a90;--danger:#ff4d6d;--success:#00d4aa;
+  --font:'Cairo',sans-serif;--display:'Tajawal',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;direction:rtl;}
+
+/* LAYOUT */
+.shell{display:flex;min-height:100vh;}
+.sidebar{width:240px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;right:0;height:100vh;z-index:50;overflow-y:auto;}
+.main{margin-right:240px;flex:1;padding:28px 32px;max-width:960px;}
+@media(max-width:768px){.sidebar{width:100%;height:auto;position:relative;border-left:none;border-bottom:1px solid var(--border);}.shell{flex-direction:column;}.main{margin-right:0;padding:16px;}}
+
+/* SIDEBAR */
+.sidebar-logo{padding:24px 20px 16px;border-bottom:1px solid var(--border);}
+.sidebar-logo h1{font-family:var(--display);font-size:1.3rem;font-weight:900;background:linear-gradient(135deg,#ff4d6d,#7b2ff7,#00d4aa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sidebar-logo p{font-size:.75rem;color:var(--muted);margin-top:3px;}
+.nav{padding:12px 0;flex:1;}
+.nav-group{padding:8px 16px 4px;font-size:.68rem;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;color:var(--muted);font-size:.9rem;font-weight:600;transition:all .2s;border-right:3px solid transparent;}
+.nav-item:hover{background:rgba(123,47,247,.1);color:var(--text);}
+.nav-item.active{background:rgba(123,47,247,.15);color:var(--accent);border-right-color:var(--accent);}
+.nav-item .ic{font-size:1.1rem;width:20px;text-align:center;}
+.sidebar-bottom{padding:16px 20px;border-top:1px solid var(--border);}
+
+/* MAIN */
+.page{display:none;}
+.page.active{display:block;}
+.page-header{margin-bottom:28px;}
+.page-header h2{font-family:var(--display);font-size:1.8rem;font-weight:900;margin-bottom:4px;}
+.page-header p{color:var(--muted);font-size:.9rem;}
+
+/* CARDS */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:20px;}
+.panel-title{font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:var(--text);}
+.panel-title .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.dot-q{background:var(--accent2);}
+.dot-r{background:var(--accent3);}
+.dot-d{background:var(--accent4);}
+.dot-s{background:var(--accent);}
+.dot-g{background:#a855f7;}
+
+/* FORM */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-row.single{grid-template-columns:1fr;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group label{font-size:.82rem;color:var(--muted);font-weight:700;}
+.form-group input,.form-group textarea,.form-group select{background:var(--surface);border:2px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--font);font-size:.92rem;padding:10px 14px;width:100%;transition:border-color .2s;direction:rtl;}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:var(--accent);}
+.form-group textarea{resize:vertical;min-height:70px;}
+.form-group input::placeholder,.form-group textarea::placeholder{color:var(--muted);}
+.hint{font-size:.74rem;color:var(--muted);margin-top:3px;}
+
+/* QUESTIONS LIST */
+.q-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.q-item{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;}
+.q-item input{background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:.85rem;padding:7px 10px;direction:rtl;}
+.q-item input:focus{outline:none;border-color:var(--accent);}
+.q-label{font-size:.72rem;color:var(--muted);font-weight:600;grid-column:1/-1;margin-bottom:-4px;}
+.q-del{background:rgba(255,77,109,.15);border:1px solid rgba(255,77,109,.3);border-radius:8px;color:var(--danger);padding:6px 10px;cursor:pointer;font-size:.9rem;transition:all .2s;white-space:nowrap;}
+.q-del:hover{background:rgba(255,77,109,.3);}
+.add-q-btn{width:100%;padding:10px;background:rgba(123,47,247,.1);border:2px dashed rgba(123,47,247,.3);border-radius:10px;color:var(--accent);font-family:var(--font);font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.add-q-btn:hover{background:rgba(123,47,247,.2);}
+
+/* GAME CARD PREVIEW */
+.game-preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
+@media(max-width:640px){.game-preview-grid{grid-template-columns:1fr;}}
+.game-preview{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;}
+.game-preview .prev-icon{font-size:2.5rem;margin-bottom:8px;display:block;min-height:40px;}
+.game-preview .prev-icon img{width:44px;height:44px;object-fit:cover;border-radius:8px;}
+.game-preview input{font-size:.82rem;text-align:center;margin-top:6px;}
+
+/* IMAGE UPLOAD */
+.img-upload-area{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+.img-upload-area:hover{border-color:var(--accent);background:rgba(123,47,247,.05);}
+.img-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.img-preview{width:60px;height:60px;object-fit:cover;border-radius:8px;margin:0 auto 6px;display:block;}
+
+/* BUTTONS */
+.btn{padding:10px 22px;border-radius:50px;border:none;font-family:var(--font);font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px;}
+.btn-primary{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;box-shadow:0 4px 18px rgba(123,47,247,.3);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(123,47,247,.4);}
+.btn-success{background:linear-gradient(135deg,var(--accent3),#00a884);color:#000;}
+.btn-success:hover{transform:translateY(-1px);}
+.btn-danger{background:rgba(255,77,109,.15);border:1px solid rgba(255,77,109,.3);color:var(--danger);}
+.btn-danger:hover{background:rgba(255,77,109,.3);}
+.btn-ghost{background:transparent;border:2px solid var(--border);color:var(--muted);}
+.btn-ghost:hover{border-color:var(--accent3);color:var(--accent3);}
+.btn-sm{padding:7px 16px;font-size:.82rem;}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 28px;border-radius:50px;font-weight:700;font-size:.9rem;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 8px 30px rgba(0,0,0,.5);}
+#toast.show{opacity:1;}
+#toast.ok{background:var(--accent3);color:#000;}
+#toast.err{background:var(--danger);color:#fff;}
+
+/* TABS */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.tab{padding:10px 20px;cursor:pointer;font-weight:700;font-size:.88rem;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+
+/* HEADER STRIP */
+.top-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;margin-bottom:0;}
+.top-bar h1{font-family:var(--display);font-size:1.1rem;font-weight:800;color:var(--text);}
+.save-bar{position:sticky;top:0;background:rgba(8,8,13,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;z-index:40;}
+.save-bar .unsaved-badge{background:rgba(255,214,10,.15);border:1px solid rgba(255,214,10,.4);border-radius:50px;padding:4px 14px;font-size:.78rem;font-weight:700;color:var(--accent4);display:none;}
+.save-bar .unsaved-badge.show{display:inline-flex;align-items:center;gap:6px;}
+
+/* FOOTER EDITOR */
+.footer-link-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;margin-bottom:8px;}
+.footer-link-row input{background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:.84rem;padding:7px 10px;direction:rtl;}
+.footer-link-row input:focus{outline:none;border-color:var(--accent);}
+
+/* SECTION DIVIDER */
+.divider{border:none;border-top:1px solid var(--border);margin:16px 0;}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:50px;font-size:.72rem;font-weight:700;}
+.badge-q{background:rgba(255,77,109,.18);color:var(--accent2);}
+.badge-r{background:rgba(0,212,170,.18);color:var(--accent3);}
+.badge-d{background:rgba(255,214,10,.18);color:var(--accent4);}
+
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px;}
+.stat-card{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+.stat-num{font-family:var(--display);font-size:2rem;font-weight:900;color:var(--accent4);}
+.stat-label{font-size:.75rem;color:var(--muted);margin-top:2px;}
+
+.color-swatch{display:inline-block;width:18px;height:18px;border-radius:50%;vertical-align:middle;border:2px solid rgba(255,255,255,.2);}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>🎭 لوحة التحكم</h1>
+    <p>مين النصاب؟</p>
+  </div>
+  <div class="nav">
+    <div class="nav-group">عام</div>
+    <div class="nav-item active" onclick="goPage('dashboard',this)"><span class="ic">📊</span> الرئيسية</div>
+    <div class="nav-item" onclick="goPage('site',this)"><span class="ic">🌐</span> إعدادات الموقع</div>
+    <div class="nav-item" onclick="goPage('footer',this)"><span class="ic">📋</span> الفوتر</div>
+
+    <div class="nav-group">الألعاب</div>
+    <div class="nav-item" onclick="goPage('game-q',this)"><span class="ic">❓</span> نسخة الأسئلة</div>
+    <div class="nav-item" onclick="goPage('game-r',this)"><span class="ic">🏆</span> نسخة التصنيف</div>
+    <div class="nav-item" onclick="goPage('game-d',this)"><span class="ic">🎨</span> نسخة الرسم</div>
+
+    <div class="nav-group">أدوات</div>
+    <div class="nav-item" onclick="goPage('export',this)"><span class="ic">💾</span> التصدير والحفظ</div>
+    <div class="nav-item" onclick="goPage('github',this)"><span class="ic">🚀</span> رفع على GitHub</div>
+  </div>
+  <div class="sidebar-bottom">
+    <a href="index.html" target="_blank" style="text-decoration:none">
+      <button class="btn btn-ghost btn-sm" style="width:100%">👁️ معاينة الموقع</button>
+    </a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- SAVE BAR -->
+<div class="save-bar">
+  <div class="unsaved-badge" id="unsaved-badge">⚠️ يوجد تغييرات غير محفوظة</div>
+  <div style="display:flex;gap:10px;margin-right:auto">
+    <button class="btn btn-ghost btn-sm" onclick="resetConfig()">↺ إعادة تعيين</button>
+    <button class="btn btn-success btn-sm" onclick="saveAll()">💾 حفظ التغييرات</button>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div class="page active" id="page-dashboard">
+  <div class="page-header" style="margin-top:20px">
+    <h2>📊 الرئيسية</h2>
+    <p>نظرة عامة على محتوى لوحة التحكم</p>
+  </div>
+  <div class="stat-grid" id="stats-grid">
+    <div class="stat-card"><div class="stat-num" id="st-q">0</div><div class="stat-label">أسئلة عادية</div></div>
+    <div class="stat-card"><div class="stat-num" id="st-r">0</div><div class="stat-label">أسئلة تصنيف</div></div>
+    <div class="stat-card"><div class="stat-num" id="st-d">0</div><div class="stat-label">أسئلة رسم</div></div>
+    <div class="stat-card"><div class="stat-num" id="st-total">0</div><div class="stat-label">إجمالي الأسئلة</div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">🚀 روابط سريعة</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-primary btn-sm" onclick="goPage('site',document.querySelector('[onclick*=site]'))">✏️ تعديل العنوان</button>
+      <button class="btn btn-primary btn-sm" onclick="goPage('game-q',document.querySelector('[onclick*=game-q]'))">❓ أسئلة اللعبة</button>
+      <button class="btn btn-primary btn-sm" onclick="goPage('game-r',document.querySelector('[onclick*=game-r]'))">🏆 أسئلة التصنيف</button>
+      <button class="btn btn-primary btn-sm" onclick="goPage('game-d',document.querySelector('[onclick*=game-d]'))">🎨 أسئلة الرسم</button>
+      <button class="btn btn-success btn-sm" onclick="goPage('export',document.querySelector('[onclick*=export]'))">💾 تصدير الملف</button>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">ℹ️ كيفية الاستخدام</div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:.88rem;color:var(--muted);line-height:1.7;">
+      <p>1️⃣ <strong style="color:var(--text)">عدّل</strong> أي شيء من الأقسام في القائمة الجانبية</p>
+      <p>2️⃣ اضغط <strong style="color:var(--accent4)">💾 حفظ التغييرات</strong> في أعلى الشاشة</p>
+      <p>3️⃣ اضغط <strong style="color:var(--accent3)">💾 تصدير ملف index.html</strong> من صفحة التصدير</p>
+      <p>4️⃣ ارفع الملف على <strong style="color:var(--text)">GitHub</strong> — Vercel يتحدث تلقائياً!</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SITE SETTINGS ===== -->
+<div class="page" id="page-site">
+  <div class="page-header" style="margin-top:20px">
+    <h2>🌐 إعدادات الموقع</h2>
+    <p>تحكم في العنوان والنصوص والبادج والأزرار</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><div class="dot dot-s"></div>اسم الموقع وهوية العلامة</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>اسم الموقع (يظهر في الشعار والتاب)</label>
+        <input id="cfg-siteName" type="text" placeholder="مين النصاب؟">
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><div class="dot dot-s"></div>العنوان الرئيسي (Gooey Morphing)</div>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:12px;">أدخل الكلمات اللي تتغير بالتسلسل — كل كلمة في سطر</p>
+    <div class="form-group">
+      <label>كلمات العنوان (سطر لكل كلمة)</label>
+      <textarea id="cfg-heroWords" rows="5" placeholder="مين&#10;النصاب؟&#10;مين&#10;النصاب؟&#10;الكل&#10;متهم!"></textarea>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><div class="dot dot-s"></div>نصوص الصفحة الرئيسية</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>نص البادج (الشريط العلوي)</label>
+        <input id="cfg-heroBadge" type="text" placeholder="🔴 ألعاب جماعية عربية">
+      </div>
+      <div class="form-group">
+        <label>النص تحت العنوان</label>
+        <input id="cfg-heroSubtitle" type="text" placeholder="5 جولات متتالية • نظام نقاط...">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>نص الزر الأول</label>
+        <input id="cfg-heroBtn1" type="text" placeholder="🎮 ابدأ الآن">
+      </div>
+      <div class="form-group">
+        <label>نص الزر الثاني</label>
+        <input id="cfg-heroBtn2" type="text" placeholder="🔑 انضم لغرفة">
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><div class="dot dot-s"></div>معاينة بطاقات الألعاب الثلاثة</div>
+    <div class="game-preview-grid">
+      <div class="game-preview">
+        <span class="prev-icon" id="prev-q-icon">❓</span>
+        <div class="form-group" style="margin-top:6px">
+          <label>اسم اللعبة</label>
+          <input id="cfg-gq-name" type="text" placeholder="نسخة الأسئلة" oninput="markDirty()">
+        </div>
+        <div class="form-group" style="margin-top:6px">
+          <label>إيموجي أو صورة</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="cfg-gq-emoji" type="text" placeholder="❓" style="width:60px;text-align:center" oninput="prevIcon('q');markDirty()">
+            <label class="img-upload-area" style="flex:1;padding:8px;margin:0;font-size:.78rem">
+              📁 رفع صورة
+              <input type="file" accept="image/*" onchange="handleImg(event,'q')">
+            </label>
+          </div>
+          <button class="btn btn-danger btn-sm" style="margin-top:6px;width:100%" onclick="clearImg('q')">🗑️ إزالة الصورة</button>
+        </div>
+        <div class="form-group" style="margin-top:6px">
+          <label>البادج</label>
+          <input id="cfg-gq-tag" type="text" placeholder="🧠 كلامي" oninput="markDirty()">
+        </div>
+        <div class="form-group" style="margin-top:6px">
+          <label>الوصف</label>
+          <textarea id="cfg-gq-desc" rows="2" placeholder="الوصف..." oninput="markDirty()"></textarea>
+        </div>
+      </div>
+
+      <div class="game-preview">
+        <span class="prev-icon" id="prev-r-icon">🏆</span>
+        <div class="form-group" style="margin-top:6px">
+          <label>اسم اللعبة</label>
+          <input id="cfg-gr-name" type="text" placeholder="نسخة التصنيف" oninput="markDirty()">
+        </div>
+        <div class="form-group" style="margin-top:6px">
+          <label>إيموجي أو صورة</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="cfg-gr-emoji" type="text" placeholder="🏆" style="width:60px;text-align:center" oninput="prevIcon('r');markDirty()">
+            <label class="img-upload-area" style="flex:1;padding:8px;margin:0;font-size:.78rem">
+              📁 رفع صورة
+              <input type="file" accept="image/*" onchange="handleImg(event,'r')">
+            </label>
+          </div>
+          <button class="btn btn-danger btn-sm" style="margin-top:6px;width:100%" onclick="clearImg('r')">🗑️ إزالة الصورة</button>
+        </div>
+        <div class="form-group" style="margin-top:6px">
+          <label>البادج</label>
+          <input id="cfg-gr-tag" type="text" placeholder="📊 تصنيف" oninput="markDirty()">
+        </div>
+        <div class="form-group" style="margin-top:6px">
+          <label>الوصف</label>
+          <textarea id="cfg-gr-desc" rows="2" placeholder="الوصف..." oninput="markDirty()"></textarea>
+        </div>
+      </div>
+
+      <div class="game-preview">
+        <span class="prev-icon" id="prev-d-icon">🎨</span>
+        <div class="form-group" style="margin-top:6px">
+          <label>اسم اللعبة</label>
+          <input id="cfg-gd-name" type="text" placeholder="نسخة الرسم" oninput="markDirty()">
+        </div>
+        <div class="form-group" style="margin-top:6px">
+          <label>إيموجي أو صورة</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="cfg-gd-emoji" type="text" placeholder="🎨" style="width:60px;text-align:center" oninput="prevIcon('d');markDirty()">
+            <label class="img-upload-area" style="flex:1;padding:8px;margin:0;font-size:.78rem">
+              📁 رفع صورة
+              <input type="file" accept="image/*" onchange="handleImg(event,'d')">
+            </label>
+          </div>
+          <button class="btn btn-danger btn-sm" style="margin-top:6px;width:100%" onclick="clearImg('d')">🗑️ إزالة الصورة</button>
+        </div>
+        <div class="form-group" style="margin-top:6px">
+          <label>البادج</label>
+          <input id="cfg-gd-tag" type="text" placeholder="✏️ رسم" oninput="markDirty()">
+        </div>
+        <div class="form-group" style="margin-top:6px">
+          <label>الوصف</label>
+          <textarea id="cfg-gd-desc" rows="2" placeholder="الوصف..." oninput="markDirty()"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="page" id="page-footer">
+  <div class="page-header" style="margin-top:20px">
+    <h2>📋 إعدادات الفوتر</h2>
+    <p>تحكم في كل محتوى الفوتر</p>
+  </div>
+  <div class="panel">
+    <div class="panel-title"><div class="dot dot-g"></div>النص التعريفي</div>
+    <div class="form-group">
+      <label>وصف الموقع في الفوتر</label>
+      <textarea id="cfg-footer-desc" rows="3" oninput="markDirty()"></textarea>
+    </div>
+    <div class="form-group" style="margin-top:12px">
+      <label>نص حقوق النشر (الأسفل)</label>
+      <input id="cfg-footer-copy" type="text" oninput="markDirty()">
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><div class="dot dot-g"></div>أعمدة الروابط</div>
+    <div id="footer-cols-editor"></div>
+  </div>
+</div>
+
+<!-- ===== GAME Q ===== -->
+<div class="page" id="page-game-q">
+  <div class="page-header" style="margin-top:20px">
+    <h2>❓ أسئلة نسخة الأسئلة</h2>
+    <p>كل سؤال عنده سؤال أصلي (للاعبين العاديين) وسؤال مختلف (للنصاب) — تُختار عشوائياً</p>
+  </div>
+  <div class="panel">
+    <div class="panel-title"><div class="dot dot-q"></div>قائمة الأسئلة <span class="badge badge-q" id="q-count">0 سؤال</span></div>
+    <div class="q-list" id="qlist-question"></div>
+    <button class="add-q-btn" onclick="addQ('question')">+ إضافة سؤال جديد</button>
+  </div>
+</div>
+
+<!-- ===== GAME R ===== -->
+<div class="page" id="page-game-r">
+  <div class="page-header" style="margin-top:20px">
+    <h2>🏆 أسئلة نسخة التصنيف</h2>
+    <p>السؤال الأصلي = الفئة الكاملة. سؤال النصاب = فئة عامة بدون تفاصيل</p>
+  </div>
+  <div class="panel">
+    <div class="panel-title"><div class="dot dot-r"></div>قائمة الأسئلة <span class="badge badge-r" id="r-count">0 سؤال</span></div>
+    <div class="q-list" id="qlist-ranking"></div>
+    <button class="add-q-btn" onclick="addQ('ranking')">+ إضافة سؤال جديد</button>
+  </div>
+</div>
+
+<!-- ===== GAME D ===== -->
+<div class="page" id="page-game-d">
+  <div class="page-header" style="margin-top:20px">
+    <h2>🎨 أسئلة نسخة الرسم</h2>
+    <p>اللاعبون العاديون يرسمون الكلمة الأصلية. النصاب يرسم الكلمة المختلفة</p>
+  </div>
+  <div class="panel">
+    <div class="panel-title"><div class="dot dot-d"></div>قائمة الأسئلة <span class="badge badge-d" id="d-count">0 سؤال</span></div>
+    <div class="q-list" id="qlist-drawing"></div>
+    <button class="add-q-btn" onclick="addQ('drawing')">+ إضافة سؤال جديد</button>
+  </div>
+</div>
+
+<!-- ===== EXPORT ===== -->
+<div class="page" id="page-export">
+  <div class="page-header" style="margin-top:20px">
+    <h2>💾 التصدير والحفظ</h2>
+    <p>صدّر ملف index.html المحدّث بكل تعديلاتك</p>
+  </div>
+  <div class="panel">
+    <div class="panel-title">📦 تصدير ملف الموقع</div>
+    <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px;line-height:1.7">
+      اضغط الزر أدناه لتحميل ملف <code style="background:var(--card2);padding:2px 6px;border-radius:4px;color:var(--accent3)">index.html</code> المحدّث بكل التغييرات التي أجريتها في لوحة التحكم.
+    </p>
+    <button class="btn btn-success" onclick="exportHTML()" style="font-size:1rem">
+      ⬇️ تحميل index.html
+    </button>
+    <hr class="divider">
+    <div style="font-size:.82rem;color:var(--muted);line-height:1.8">
+      <strong style="color:var(--text)">ملاحظة:</strong> الملف المُصدَّر يحتوي على كل التغييرات مدمجة داخله مباشرةً — لا حاجة لقاعدة بيانات أو سيرفر.
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">📥 استيراد إعدادات</div>
+    <p style="color:var(--muted);font-size:.88rem;margin-bottom:12px">استيراد ملف JSON للإعدادات (مُصدَّر سابقاً من هنا)</p>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <label class="btn btn-ghost" style="cursor:pointer">
+        📂 فتح ملف JSON
+        <input type="file" accept=".json" style="display:none" onchange="importJSON(event)">
+      </label>
+      <button class="btn btn-ghost" onclick="exportJSON()">💾 تصدير JSON فقط</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GITHUB ===== -->
+<div class="page" id="page-github">
+  <div class="page-header" style="margin-top:20px">
+    <h2>🚀 رفع على GitHub + Vercel</h2>
+    <p>خطوات الرفع والنشر التلقائي</p>
+  </div>
+  <div class="panel">
+    <div class="panel-title">📁 هيكل الملفات المطلوبة</div>
+    <div style="background:var(--surface);border-radius:10px;padding:16px;font-family:monospace;font-size:.85rem;color:var(--accent3);direction:ltr;text-align:left">
+      <div style="color:var(--muted)">your-repo/</div>
+      <div style="padding-right:20px">├── index.html <span style="color:var(--muted)">&lt;-- ملف اللعبة الرئيسي</span></div>
+      <div style="padding-right:20px">├── admin.html <span style="color:var(--muted)">&lt;-- لوحة التحكم</span></div>
+      <div style="padding-right:20px">└── vercel.json <span style="color:var(--muted)">&lt;-- إعدادات Vercel</span></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">📋 خطوات الرفع</div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="background:var(--card2);border-radius:12px;padding:14px">
+        <div style="font-weight:700;margin-bottom:6px;color:var(--accent4)">الخطوة 1 — إنشاء مستودع GitHub</div>
+        <p style="font-size:.85rem;color:var(--muted);line-height:1.7">اذهب إلى <a href="https://github.com/new" target="_blank" style="color:var(--accent3)">github.com/new</a> وأنشئ مستودع جديد (Public). ثم ارفع الملفات الثلاثة.</p>
+      </div>
+      <div style="background:var(--card2);border-radius:12px;padding:14px">
+        <div style="font-weight:700;margin-bottom:6px;color:var(--accent4)">الخطوة 2 — ربط Vercel</div>
+        <p style="font-size:.85rem;color:var(--muted);line-height:1.7">اذهب إلى <a href="https://vercel.com/new" target="_blank" style="color:var(--accent3)">vercel.com/new</a> واختر المستودع → Deploy. سيعطيك رابط مباشر.</p>
+      </div>
+      <div style="background:var(--card2);border-radius:12px;padding:14px">
+        <div style="font-weight:700;margin-bottom:6px;color:var(--accent4)">الخطوة 3 — التحديث التلقائي</div>
+        <p style="font-size:.85rem;color:var(--muted);line-height:1.7">كل مرة ترفع ملفاً جديداً على GitHub → Vercel يتحدث تلقائياً خلال ثوانٍ!</p>
+      </div>
+      <div style="background:var(--card2);border-radius:12px;padding:14px">
+        <div style="font-weight:700;margin-bottom:6px;color:var(--accent3)">⚡ تدفق العمل اليومي</div>
+        <div style="font-family:monospace;font-size:.82rem;color:var(--accent3);direction:ltr;text-align:left;background:var(--surface);padding:10px;border-radius:8px;margin-top:8px">
+          1. عدّل من لوحة التحكم<br>
+          2. احفظ → حمّل index.html<br>
+          3. ارفع على GitHub<br>
+          4. Vercel يتحدث تلقائياً ✅
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">📄 ملف vercel.json</div>
+    <div style="background:var(--surface);border-radius:10px;padding:16px;font-family:monospace;font-size:.84rem;color:var(--accent3);direction:ltr;text-align:left">
+{<br>
+&nbsp;&nbsp;"version": 2,<br>
+&nbsp;&nbsp;"routes": [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{ "src": "/", "dest": "/index.html" },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{ "src": "/admin", "dest": "/admin.html" }<br>
+&nbsp;&nbsp;]<br>
+}
+    </div>
+    <button class="btn btn-ghost btn-sm" style="margin-top:12px" onclick="downloadVercelJson()">⬇️ تحميل vercel.json</button>
+  </div>
+</div>
+
+</main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ================================================
+// DEFAULT CONFIG (mirrors index.html)
+// ================================================
+const DEFAULT = {
+  siteName: 'مين النصاب؟',
+  heroTitle: ['مين','النصاب؟','مين','النصاب؟','الكل','متهم!'],
+  heroBadge: '🔴 ألعاب جماعية عربية',
+  heroSubtitle: '5 جولات متتالية • نظام نقاط • فائز واحد في النهاية 🏆',
+  heroBtn1: '🎮 ابدأ الآن',
+  heroBtn2: '🔑 انضم لغرفة',
+  games: {
+    question:{name:'نسخة الأسئلة',emoji:'❓',image:'',tag:'🧠 كلامي',desc:'الكل يجاوب على نفس السؤال إلا النصاب اللي عنده سؤال مختلف. اكتشفه من إجابته!'},
+    ranking: {name:'نسخة التصنيف',emoji:'🏆',image:'',tag:'📊 تصنيف',desc:'رتّب أفضل 3 من فئة معينة! النصاب يعرف الفئة فقط بدون التفاصيل.'},
+    drawing: {name:'نسخة الرسم',  emoji:'🎨',image:'',tag:'✏️ رسم',  desc:'الكل يرسم نفس الشيء إلا النصاب! خمّن مين رسم بشكل مختلف.'}
+  },
+  footer:{
+    desc:'ألعاب جماعية عربية ممتعة للأصدقاء والستريمرز. اكتشف النصاب قبل أن يكتشفك!',
+    cols:[
+      {title:'اللعبة',  links:[{t:'نسخة الأسئلة',u:'#'},{t:'نسخة التصنيف',u:'#'},{t:'نسخة الرسم',u:'#'}]},
+      {title:'المجتمع', links:[{t:'تواصل معنا',u:'#'},{t:'الستريمرز',u:'#'},{t:'المستجدات',u:'#'}]},
+      {title:'المزيد',  links:[{t:'عن اللعبة',u:'#'},{t:'سياسة الخصوصية',u:'#'},{t:'الشروط والأحكام',u:'#'}]}
+    ],
+    copy:'مين النصاب؟ © 2025 — صُنع بـ ❤️ للعرب'
+  },
+  questions:{
+    question:[
+      {n:'ما هو أفضل طعام في نظرك؟',i:'ما هو أفضل مشروب في نظرك؟'},
+      {n:'لو سافرت الآن أين تذهب؟',i:'لو عندك يوم إجازة ماذا تفعل؟'},
+      {n:'ما هو أحب الأفلام لديك؟',i:'ما هو أحب المسلسلات لديك؟'},
+      {n:'صف يومك المثالي',i:'صف إجازتك المثالية'},
+      {n:'ما الشيء الذي لا تستطيع العيش بدونه؟',i:'ما الشيء الذي تحب اقتناءه؟'},
+      {n:'لو كنت حيواناً ماذا ستكون؟',i:'لو كنت شخصية تاريخية من ستكون؟'},
+      {n:'ما هي هوايتك المفضلة؟',i:'ما الرياضة التي تحب ممارستها؟'},
+      {n:'ما هو أحب الكتب لديك؟',i:'ما هو أحب الأغاني لديك؟'},
+      {n:'ما الشيء الذي يجعلك تضحك دائماً؟',i:'ما الشيء الذي يجعلك تشعر بالراحة؟'},
+      {n:'لو كان معك مليون ريال ماذا تفعل؟',i:'لو كان معك أسبوع إجازة مفتوح ماذا تفعل؟'}
+    ],
+    ranking:[
+      {n:'أفضل 3 مطاعم في مدينتك',i:'أفضل 3 أماكن للترفيه في مدينتك'},
+      {n:'أفضل 3 لاعبي كرة قدم في العالم',i:'أفضل 3 مدربي كرة قدم في العالم'},
+      {n:'أفضل 3 أفلام شاهدتها',i:'أفضل 3 مسلسلات شاهدتها'},
+      {n:'أفضل 3 وجبات على الإفطار',i:'أفضل 3 وجبات على العشاء'},
+      {n:'أفضل 3 دول للسياحة',i:'أفضل 3 مدن للعيش'},
+      {n:'أفضل 3 تطبيقات على هاتفك',i:'أفضل 3 مواقع تزورها على النت'},
+      {n:'أفضل 3 علامات سيارات',i:'أفضل 3 شركات طيران'}
+    ],
+    drawing:[
+      {n:'ارسم: قطة',i:'ارسم: كلب'},
+      {n:'ارسم: بيت',i:'ارسم: قصر'},
+      {n:'ارسم: سيارة',i:'ارسم: دراجة'},
+      {n:'ارسم: شمس',i:'ارسم: قمر'},
+      {n:'ارسم: شجرة',i:'ارسم: زهرة'},
+      {n:'ارسم: سمكة',i:'ارسم: طائر'},
+      {n:'ارسم: كتاب',i:'ارسم: دفتر'},
+      {n:'ارسم: هاتف',i:'ارسم: كمبيوتر'}
+    ]
+  }
+};
+
+// ================================================
+// STATE
+// ================================================
+let CFG = deepClone(DEFAULT);
+let dirty = false;
+
+function deepClone(o){return JSON.parse(JSON.stringify(o));}
+
+// ================================================
+// INIT
+// ================================================
+window.addEventListener('load',()=>{
+  const saved=localStorage.getItem('nassab_config');
+  if(saved){
+    try{ CFG=Object.assign(deepClone(DEFAULT),JSON.parse(saved)); }catch(e){}
+  }
+  populateAll();
+  updateStats();
+});
+
+function populateAll(){
+  // Site
+  v('cfg-siteName',CFG.siteName);
+  v('cfg-heroWords',(CFG.heroTitle||[]).join('\n'));
+  v('cfg-heroBadge',CFG.heroBadge);
+  v('cfg-heroSubtitle',CFG.heroSubtitle);
+  v('cfg-heroBtn1',CFG.heroBtn1);
+  v('cfg-heroBtn2',CFG.heroBtn2);
+  // Games
+  ['question','ranking','drawing'].forEach(g=>{
+    const k=g==='question'?'q':g==='ranking'?'r':'d';
+    const gc=CFG.games[g];
+    v('cfg-g'+k+'-name',gc.name);
+    v('cfg-g'+k+'-emoji',gc.emoji);
+    v('cfg-g'+k+'-tag',gc.tag);
+    v('cfg-g'+k+'-desc',gc.desc);
+    if(gc.image) showImgPreview(k,gc.image);
+    prevIcon(k);
+  });
+  // Footer
+  v('cfg-footer-desc',CFG.footer.desc);
+  v('cfg-footer-copy',CFG.footer.copy);
+  renderFooterCols();
+  // Questions
+  ['question','ranking','drawing'].forEach(renderQList);
+}
+
+function v(id,val){const el=document.getElementById(id);if(el)el.value=val||'';}
+function gv(id){const el=document.getElementById(id);return el?el.value:'';}
+
+// ================================================
+// NAVIGATION
+// ================================================
+function goPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+}
+
+// ================================================
+// DIRTY STATE
+// ================================================
+function markDirty(){
+  dirty=true;
+  document.getElementById('unsaved-badge').classList.add('show');
+}
+
+// ================================================
+// QUESTIONS EDITOR
+// ================================================
+function renderQList(game){
+  const list=document.getElementById('qlist-'+game);
+  const qs=CFG.questions[game]||[];
+  const badge=document.getElementById((game==='question'?'q':game==='ranking'?'r':'d')+'-count');
+  if(badge) badge.textContent=qs.length+' سؤال';
+  list.innerHTML='';
+  qs.forEach((q,i)=>{
+    const row=document.createElement('div');
+    row.className='q-item';
+    const lbl=game==='drawing'?'كلمة الرسم':'السؤال';
+    row.innerHTML=`
+      <div class="q-label">${lbl} ${i+1}</div>
+      <input placeholder="${game==='drawing'?'ارسم: قطة':'ما هو أفضل...'}  (للاعبين العاديين)" value="${esc(q.n)}" oninput="updateQ('${game}',${i},'n',this.value);markDirty()">
+      <input placeholder="${game==='drawing'?'ارسم: كلب':'سؤال النصاب المختلف'}" value="${esc(q.i)}" oninput="updateQ('${game}',${i},'i',this.value);markDirty()">
+      <button class="q-del" onclick="deleteQ('${game}',${i})">🗑️</button>
+    `;
+    list.appendChild(row);
+  });
+  updateStats();
+}
+
+function esc(s){return (s||'').replace(/"/g,'&quot;');}
+
+function updateQ(game,idx,field,val){
+  if(!CFG.questions[game][idx]) return;
+  CFG.questions[game][idx][field]=val;
+}
+
+function addQ(game){
+  CFG.questions[game].push({n:'',i:''});
+  renderQList(game);
+  markDirty();
+  // scroll to bottom of list
+  const list=document.getElementById('qlist-'+game);
+  setTimeout(()=>list.lastChild&&list.lastChild.scrollIntoView({behavior:'smooth'}),50);
+}
+
+function deleteQ(game,idx){
+  CFG.questions[game].splice(idx,1);
+  renderQList(game);
+  markDirty();
+}
+
+// ================================================
+// FOOTER EDITOR
+// ================================================
+function renderFooterCols(){
+  const c=document.getElementById('footer-cols-editor');
+  c.innerHTML='';
+  (CFG.footer.cols||[]).forEach((col,ci)=>{
+    const s=document.createElement('div');
+    s.style.marginBottom='18px';
+    s.innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <input value="${esc(col.title)}" placeholder="عنوان العمود" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:.88rem;padding:7px 10px;direction:rtl;max-width:160px" oninput="CFG.footer.cols[${ci}].title=this.value;markDirty()">
+        <span style="color:var(--muted);font-size:.8rem">الروابط:</span>
+      </div>
+      <div id="fcol-${ci}">
+        ${col.links.map((l,li)=>`
+          <div class="footer-link-row">
+            <input value="${esc(l.t)}" placeholder="اسم الرابط" oninput="CFG.footer.cols[${ci}].links[${li}].t=this.value;markDirty()">
+            <input value="${esc(l.u)}" placeholder="https://..." oninput="CFG.footer.cols[${ci}].links[${li}].u=this.value;markDirty()">
+            <button class="q-del" onclick="delFooterLink(${ci},${li})">🗑️</button>
+          </div>
+        `).join('')}
+      </div>
+      <button class="add-q-btn" style="margin-top:8px" onclick="addFooterLink(${ci})">+ إضافة رابط</button>
+    `;
+    c.appendChild(s);
+    if(ci<(CFG.footer.cols.length-1)){const hr=document.createElement('hr');hr.className='divider';c.appendChild(hr);}
+  });
+}
+
+function addFooterLink(ci){
+  CFG.footer.cols[ci].links.push({t:'',u:'#'});
+  renderFooterCols();markDirty();
+}
+function delFooterLink(ci,li){
+  CFG.footer.cols[ci].links.splice(li,1);
+  renderFooterCols();markDirty();
+}
+
+// ================================================
+// GAME ICON / IMAGE
+// ================================================
+const _imgCache={q:'',r:'',d:''};
+
+function prevIcon(k){
+  const el=document.getElementById('prev-'+k+'-icon');
+  const v=gv('cfg-g'+k+'-emoji')||'❓';
+  if(_imgCache[k]){
+    el.innerHTML=`<img src="${_imgCache[k]}" class="img-preview">`;
+  } else {
+    el.textContent=v;
+  }
+}
+
+function handleImg(e,k){
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    _imgCache[k]=ev.target.result;
+    prevIcon(k);
+    markDirty();
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearImg(k){
+  _imgCache[k]='';
+  prevIcon(k);
+  markDirty();
+}
+
+function showImgPreview(k,src){
+  _imgCache[k]=src;
+}
+
+// ================================================
+// SAVE
+// ================================================
+function collectConfig(){
+  const cfg=deepClone(CFG);
+  cfg.siteName=gv('cfg-siteName');
+  cfg.heroTitle=gv('cfg-heroWords').split('\n').map(s=>s.trim()).filter(Boolean);
+  cfg.heroBadge=gv('cfg-heroBadge');
+  cfg.heroSubtitle=gv('cfg-heroSubtitle');
+  cfg.heroBtn1=gv('cfg-heroBtn1');
+  cfg.heroBtn2=gv('cfg-heroBtn2');
+  cfg.footer.desc=gv('cfg-footer-desc');
+  cfg.footer.copy=gv('cfg-footer-copy');
+  // Games
+  ['question','ranking','drawing'].forEach(g=>{
+    const k=g==='question'?'q':g==='ranking'?'r':'d';
+    cfg.games[g].name=gv('cfg-g'+k+'-name');
+    cfg.games[g].emoji=gv('cfg-g'+k+'-emoji');
+    cfg.games[g].tag=gv('cfg-g'+k+'-tag');
+    cfg.games[g].desc=gv('cfg-g'+k+'-desc');
+    cfg.games[g].image=_imgCache[k]||'';
+  });
+  return cfg;
+}
+
+function saveAll(){
+  const cfg=collectConfig();
+  CFG=cfg;
+  localStorage.setItem('nassab_config',JSON.stringify(cfg));
+  dirty=false;
+  document.getElementById('unsaved-badge').classList.remove('show');
+  updateStats();
+  toast('✅ تم الحفظ!','ok');
+}
+
+function resetConfig(){
+  if(!confirm('هل تريد إعادة تعيين كل الإعدادات للقيم الافتراضية؟')) return;
+  CFG=deepClone(DEFAULT);
+  localStorage.removeItem('nassab_config');
+  populateAll();
+  dirty=false;
+  document.getElementById('unsaved-badge').classList.remove('show');
+  toast('↺ تم إعادة التعيين','ok');
+}
+
+// ================================================
+// STATS
+// ================================================
+function updateStats(){
+  const q=(CFG.questions?.question||[]).length;
+  const r=(CFG.questions?.ranking||[]).length;
+  const d=(CFG.questions?.drawing||[]).length;
+  const el=id=>document.getElementById(id);
+  if(el('st-q')) el('st-q').textContent=q;
+  if(el('st-r')) el('st-r').textContent=r;
+  if(el('st-d')) el('st-d').textContent=d;
+  if(el('st-total')) el('st-total').textContent=q+r+d;
+}
+
+// ================================================
+// EXPORT HTML — injects config into index.html
+// ================================================
+async function exportHTML(){
+  saveAll();
+  const cfg=collectConfig();
+  // We'll fetch the current index.html and inject config
+  try{
+    const resp=await fetch('index.html');
+    let html=await resp.text();
+    // Replace the nassab_config in localStorage call with a direct injection
+    const cfgJSON=JSON.stringify(cfg);
+    // Inject config right after <script> start in the game JS
+    const marker='const DEFAULT_CONFIG = {';
+    const injectBlock=`// !! ADMIN INJECTED CONFIG !!\nwindow.__NASSAB_INJECTED__=${cfgJSON};\n`;
+    // If already injected, replace it
+    if(html.includes('__NASSAB_INJECTED__')){
+      html=html.replace(/\/\/ !! ADMIN INJECTED CONFIG !!\nwindow\.__NASSAB_INJECTED__=.*?;\n/,'');
+    }
+    // Inject before loadSiteConfig function
+    html=html.replace('function loadSiteConfig(){',injectBlock+'function loadSiteConfig(){');
+    // Also update loadSiteConfig to check window.__NASSAB_INJECTED__
+    html=html.replace(
+      "const saved=localStorage.getItem('nassab_config');",
+      "const saved=window.__NASSAB_INJECTED__?JSON.stringify(window.__NASSAB_INJECTED__):localStorage.getItem('nassab_config');"
+    );
+    download('index.html',html,'text/html');
+    toast('✅ تم تصدير index.html!','ok');
+  }catch(e){
+    // Fallback: just save config to localStorage and tell user
+    toast('⚠️ تعذّر تحميل index.html — تأكد من أن الملفين في نفس المجلد','err');
+  }
+}
+
+function exportJSON(){
+  saveAll();
+  download('nassab-config.json',JSON.stringify(collectConfig(),null,2),'application/json');
+  toast('✅ تم تصدير الإعدادات','ok');
+}
+
+function importJSON(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      CFG=Object.assign(deepClone(DEFAULT),data);
+      populateAll();
+      markDirty();
+      toast('✅ تم استيراد الإعدادات','ok');
+    }catch(err){toast('❌ ملف JSON غير صحيح','err');}
+  };
+  r.readAsText(file);
+}
+
+function downloadVercelJson(){
+  const content=`{
+  "version": 2,
+  "routes": [
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/admin", "dest": "/admin.html" }
+  ]
+}`;
+  download('vercel.json',content,'application/json');
+}
+
+function download(name,content,type){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([content],{type}));
+  a.download=name;
+  a.click();
+}
+
+// ================================================
+// TOAST
+// ================================================
+let toastT;
+function toast(msg,type='ok'){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.className='show '+type;
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>el.className='',3000);
+}
+
+// ================================================
+// WARN UNSAVED
+// ================================================
+window.addEventListener('beforeunload',e=>{
+  if(dirty){e.preventDefault();e.returnValue='';}
+});
+
+// Auto-mark dirty on any input
+document.addEventListener('input',()=>markDirty());
+</script>
+</body>
+</html>
