@@ -360,13 +360,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <p>تحكم في كل محتوى الفوتر</p>
   </div>
   <div class="panel">
-    <div class="panel-title"><div class="dot dot-g"></div>النص التعريفي</div>
+    <div class="panel-title"><div class="dot dot-g"></div>نص حقوق النشر</div>
     <div class="form-group">
-      <label>وصف الموقع في الفوتر</label>
-      <textarea id="cfg-footer-desc" rows="3" oninput="markDirty()"></textarea>
-    </div>
-    <div class="form-group" style="margin-top:12px">
-      <label>نص حقوق النشر (الأسفل)</label>
+      <label>نص حقوق النشر (يظهر أسفل الفوتر)</label>
       <input id="cfg-footer-copy" type="text" oninput="markDirty()">
     </div>
   </div>
@@ -609,7 +605,6 @@ function populateAll(){
     prevIcon(k);
   });
   // Footer
-  v('cfg-footer-desc',CFG.footer.desc);
   v('cfg-footer-copy',CFG.footer.copy);
   renderFooterCols();
   // Questions
@@ -770,7 +765,7 @@ function collectConfig(){
   cfg.heroSubtitle=gv('cfg-heroSubtitle');
   cfg.heroBtn1=gv('cfg-heroBtn1');
   cfg.heroBtn2=gv('cfg-heroBtn2');
-  cfg.footer.desc=gv('cfg-footer-desc');
+  cfg.footer.desc='';
   cfg.footer.copy=gv('cfg-footer-copy');
   // Games
   ['question','ranking','drawing'].forEach(g=>{

@@ -42,51 +42,100 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);min-hei
 .game-card.d [data-glow-inner]{position:absolute;inset:0;border-radius:20px;will-change:filter;opacity:.7;filter:blur(6px);background:radial-gradient(calc(var(--gc-spot)*.5) calc(var(--gc-spot)*.5) at calc(var(--gcx,0)*1px) calc(var(--gcy,0)*1px),rgba(255,214,10,.18),transparent);}
 .game-card-content{position:relative;z-index:1;}
 
-/* ===== FLICKERING FOOTER ===== */
-.site-footer{width:100%;padding-bottom:0;margin-top:40px;}
-.site-footer-top{display:flex;flex-direction:column;gap:24px;padding:32px 24px 24px;}
-.footer-brand{display:flex;flex-direction:column;gap:12px;max-width:280px;}
-.footer-brand-name{font-family:var(--font-display);font-size:1.4rem;font-weight:900;background:linear-gradient(135deg,var(--accent1),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.footer-brand-desc{color:var(--muted);font-size:.88rem;line-height:1.7;}
-.footer-links-row{display:flex;gap:40px;flex-wrap:wrap;}
-.footer-col h4{font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:12px;}
-.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
-.footer-col ul li a{color:var(--muted);text-decoration:none;font-size:.85rem;transition:color .2s;display:inline-flex;align-items:center;gap:4px;}
+/* ===== SIMPLE FOOTER ===== */
+.site-footer{width:100%;border-top:1px solid var(--border);margin-top:48px;padding:24px 20px;}
+.footer-inner{max-width:900px;margin:0 auto;display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:flex-start;}
+.footer-links-row{display:flex;gap:32px;flex-wrap:wrap;}
+.footer-col h4{font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:7px;}
+.footer-col ul li a{color:var(--muted);text-decoration:none;font-size:.83rem;transition:color .2s;}
 .footer-col ul li a:hover{color:var(--accent3);}
-.footer-flicker{width:100%;height:140px;position:relative;margin-top:16px;overflow:hidden;}
-.footer-flicker-fade{position:absolute;inset:0;background:linear-gradient(to bottom,var(--bg) 0%,transparent 40%);z-index:2;pointer-events:none;}
-#footer-flicker-canvas{display:block;width:100%;height:100%;position:absolute;inset:0;}
-.footer-bottom{text-align:center;padding:12px;color:var(--muted);font-size:.75rem;border-top:1px solid var(--border);}
+.footer-copy{text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);color:var(--muted);font-size:.75rem;}
+
 #app{position:relative;z-index:1;min-height:100vh;}
 .screen{display:none;min-height:100vh;}
 .screen.active{display:flex;flex-direction:column;}
 
-/* HEADER */
-.site-header{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid var(--border);background:rgba(10,10,15,.92);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100;gap:10px;}
-.logo{font-family:var(--font-display);font-size:1.5rem;font-weight:900;background:linear-gradient(135deg,var(--accent1),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;flex-shrink:0;}
+/* ===== GAME SCREEN HEADER (kept for in-game only) ===== */
+.site-header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);background:rgba(10,10,15,.92);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100;gap:10px;}
+.logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;background:linear-gradient(135deg,var(--accent1),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;flex-shrink:0;}
 .header-center{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
-.round-badge{font-size:.78rem;color:var(--muted);font-weight:700;letter-spacing:.5px;}
+.round-badge{font-size:.75rem;color:var(--muted);font-weight:700;letter-spacing:.5px;}
 .round-progress{display:flex;gap:5px;}
-.round-dot{width:11px;height:11px;border-radius:50%;background:var(--border);transition:all .4s;}
+.round-dot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:all .4s;}
 .round-dot.done{background:var(--accent3);}
 .round-dot.current{background:var(--accent4);box-shadow:0 0 10px var(--accent4);transform:scale(1.2);}
 .score-mini{display:flex;gap:8px;flex-wrap:wrap;}
-.smi{display:flex;align-items:center;gap:4px;font-size:.76rem;font-weight:700;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:50px;padding:3px 9px;}
+.smi{display:flex;align-items:center;gap:4px;font-size:.74rem;font-weight:700;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:50px;padding:3px 9px;}
 .smi-pts{color:var(--accent4);}
 
-/* BUTTONS */
-.btn{padding:11px 26px;border-radius:50px;border:none;font-family:var(--font-main);font-size:.95rem;font-weight:700;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:7px;}
-.btn-primary{background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#fff;box-shadow:0 4px 20px var(--glow1);}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--glow1);}
-.btn-secondary{background:transparent;color:var(--text);border:2px solid var(--border);}
-.btn-secondary:hover{border-color:var(--accent3);color:var(--accent3);}
-.btn-accent3{background:linear-gradient(135deg,var(--accent3),#00a884);color:#000;}
-.btn-accent3:hover{transform:translateY(-2px);}
-.btn-accent4{background:linear-gradient(135deg,var(--accent4),#ffa500);color:#000;}
-.btn-accent4:hover{transform:translateY(-2px);}
-.btn-lg{padding:15px 38px;font-size:1.1rem;}
-.btn-sm{padding:7px 16px;font-size:.82rem;}
-.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;}
+/* ===== 3D PUSH BUTTONS (all general buttons) ===== */
+.btn{
+  --button_radius:0.65em;
+  --btn-top-color:#1e1e2e;
+  --btn-outline:#7b2ff7;
+  font-size:15px;font-weight:700;border:none;cursor:pointer;
+  border-radius:var(--button_radius);
+  background:var(--btn-outline);
+  font-family:var(--font-main);
+  display:inline-block;text-align:center;
+  transition:none;
+}
+.btn .btn-top{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  box-sizing:border-box;
+  border:2px solid var(--btn-outline);
+  border-radius:var(--button_radius);
+  padding:0.62em 1.4em;
+  background:var(--btn-top-color);
+  color:#fff;
+  transform:translateY(-0.22em);
+  transition:transform 0.1s ease;
+  white-space:nowrap;
+}
+.btn:hover .btn-top{transform:translateY(-0.36em);}
+.btn:active .btn-top{transform:translateY(0);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn:disabled .btn-top{transform:translateY(-0.22em)!important;}
+
+/* Button color variants */
+.btn-primary{--btn-outline:#7b2ff7;--btn-top-color:#1a0e3a;}
+.btn-secondary{--btn-outline:#2a2a50;--btn-top-color:#12121f;}
+.btn-accent3{--btn-outline:#00d4aa;--btn-top-color:#00221c;}
+.btn-accent4{--btn-outline:#d4a000;--btn-top-color:#2a1e00;}
+.btn-danger{--btn-outline:#ff4d6d;--btn-top-color:#2a0a12;}
+
+.btn-sm .btn-top{padding:0.4em 1em;font-size:.82rem;}
+.btn-lg .btn-top{padding:0.75em 1.8em;font-size:1.05rem;}
+
+/* ===== START GAME SPECIAL BUTTON ===== */
+.btn-start{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:0 28px;height:52px;
+  color:#fff;
+  text-shadow:2px 2px rgb(80,40,0);
+  text-transform:uppercase;
+  cursor:pointer;border:solid 2px #000;
+  letter-spacing:1px;font-weight:700;font-size:16px;
+  font-family:var(--font-main);
+  background-color:hsl(49deg 98% 50%);
+  border-radius:50px;
+  position:relative;overflow:hidden;
+  transition:all 0.5s ease;
+  width:100%;
+}
+.btn-start:active{transform:scale(0.93);transition:all 100ms ease;}
+.btn-start svg{transition:all 0.5s ease;z-index:2;flex-shrink:0;}
+.btn-start .play-text{transition:all 0.5s ease;transition-delay:300ms;z-index:2;}
+.btn-start:hover svg{transform:scale(3) translate(50%);}
+.btn-start .now-text{
+  position:absolute;left:0;
+  transform:translateX(-100%);
+  transition:all 0.5s ease;z-index:2;
+  font-weight:700;letter-spacing:1px;text-transform:uppercase;
+}
+.btn-start:hover .now-text{transform:translateX(20px);transition-delay:300ms;}
+.btn-start:hover .play-text{transform:translateX(200%);transition-delay:300ms;}
 
 /* CARDS / INPUTS */
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
@@ -95,16 +144,15 @@ input:focus,textarea:focus{outline:none;border-color:var(--accent2);box-shadow:0
 input::placeholder,textarea::placeholder{color:var(--muted);}
 label{display:block;font-size:.88rem;color:var(--muted);margin-bottom:7px;font-weight:600;}
 
-/* HOME */
+/* HOME — no header, centred layout */
 #screen-home{align-items:center;flex-direction:column;padding:0 16px 60px;}
-.hero{text-align:center;max-width:680px;margin:44px auto 28px;}
+.home-nav-bar{width:100%;max-width:900px;display:flex;align-items:center;justify-content:space-between;padding:20px 0 0;margin-bottom:0;}
+.home-logo{font-family:var(--font-display);font-size:1.5rem;font-weight:900;background:linear-gradient(135deg,var(--accent1),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero{text-align:center;max-width:680px;margin:36px auto 22px;width:100%;}
 .hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(123,47,247,.2);border:1px solid rgba(123,47,247,.4);border-radius:50px;padding:6px 16px;font-size:.82rem;color:var(--accent3);margin-bottom:18px;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.65;}}
-.hero h1{font-family:var(--font-display);font-size:clamp(2.5rem,7vw,4.8rem);font-weight:900;line-height:1.1;margin-bottom:14px;}
-.line1{background:linear-gradient(135deg,var(--accent4),var(--accent1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.line2{background:linear-gradient(135deg,var(--accent3),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.hero p{font-size:1.05rem;color:var(--muted);line-height:1.9;margin-bottom:28px;}
-.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.hero p{font-size:1.05rem;color:var(--muted);line-height:1.9;margin-bottom:22px;}
+.hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:8px;}
 .name-entry{max-width:430px;width:100%;margin:0 auto 26px;}
 .name-entry .card{text-align:center;}
 .name-entry h2{font-size:1.2rem;margin-bottom:14px;}
@@ -271,10 +319,8 @@ label{display:block;font-size:.88rem;color:var(--muted);margin-bottom:7px;font-w
 .join-container p{color:var(--muted);margin-bottom:22px;}
 .code-input{font-size:1.8rem!important;text-align:center!important;letter-spacing:8px!important;font-weight:800!important;}
 
-footer{text-align:center;padding:22px;color:var(--muted);border-top:1px solid var(--border);font-size:.82rem;}
-/* Glow card init vars */
 .game-card{--gc-border-sz:2px;--gc-spot:200px;--gc-bspot:.9;--gc-blight:.7;}
-@media(max-width:640px){.footer-links-row{gap:24px;}.site-footer-top{flex-direction:column;}}
+@media(max-width:640px){.footer-links-row{gap:24px;} }
 #notif{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:50px;padding:11px 26px;font-weight:600;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 8px 30px rgba(0,0,0,.45);}
 #notif.show{opacity:1;}
 .streamer-toggle{position:fixed;bottom:18px;right:18px;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:8px 16px;cursor:pointer;font-family:var(--font-main);font-size:.78rem;color:var(--muted);z-index:500;transition:all .2s;}
@@ -303,16 +349,12 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
 
 <!-- ====== HOME ====== -->
 <div id="screen-home" class="screen active">
-  <header class="site-header">
-    <div class="logo">🎭 مين النصاب؟</div>
-    <div style="display:flex;gap:9px">
-      <button class="btn btn-secondary btn-sm" onclick="showScreen('join')">🔑 انضمام</button>
-      <button class="btn btn-primary btn-sm" onclick="tryCreate()">➕ إنشاء غرفة</button>
-    </div>
-  </header>
+  <!-- Simple logo bar, no sticky header -->
+  <div style="width:100%;max-width:900px;margin:0 auto;padding:22px 16px 0;display:flex;align-items:center;justify-content:center;">
+    <div class="home-logo">🎭 مين النصاب؟</div>
+  </div>
   <div class="hero">
     <div class="hero-badge">🔴 ألعاب جماعية عربية</div>
-    <!-- Gooey morphing title -->
     <div class="gooey-wrap">
       <div class="gooey-inner">
         <span class="gooey-text1" id="gooey-t1"></span>
@@ -320,20 +362,25 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
       </div>
     </div>
     <p>5 جولات متتالية • نظام نقاط • فائز واحد في النهاية 🏆</p>
-    <div class="hero-actions">
-      <button class="btn btn-primary btn-lg" onclick="tryCreate()">🎮 ابدأ الآن</button>
-      <button class="btn btn-secondary btn-lg" onclick="showScreen('join')">🔑 انضم لغرفة</button>
-    </div>
   </div>
   <div class="name-entry">
     <div class="card">
       <h2>👤 أدخل اسمك أولاً</h2>
       <div class="input-row">
         <input id="player-name-input" type="text" placeholder="اسمك هنا..." maxlength="20">
-        <button class="btn btn-accent3" onclick="saveName()">✓</button>
+        <button class="btn btn-accent3" onclick="saveName()"><span class="btn-top">✓</span></button>
       </div>
       <div id="name-saved" style="display:none;margin-top:9px;color:var(--accent3);font-weight:700">✅ أهلاً، <span id="saved-name-display"></span>!</div>
     </div>
+  </div>
+  <!-- Hero action buttons below name entry -->
+  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;padding:0 16px;">
+    <button class="btn-start" onclick="tryCreate()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      <span class="play-text">ابدأ اللعب</span>
+      <span class="now-text">🎮 هيا!</span>
+    </button>
+    <button class="btn btn-secondary" onclick="showScreen('join')"><span class="btn-top">🔑 انضم لغرفة</span></button>
   </div>
   <div class="games-section">
     <div class="section-title">🎯 اختر لعبتك</div>
@@ -372,14 +419,10 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
     </div>
   </div>
 
-  <!-- ===== FLICKERING FOOTER ===== -->
-  <footer class="site-footer">
-    <div class="site-footer-top" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;">
-      <div class="footer-brand">
-        <div class="footer-brand-name">🎭 مين النصاب؟</div>
-        <p class="footer-brand-desc">ألعاب جماعية عربية ممتعة للأصدقاء والستريمرز. اكتشف النصاب قبل أن يكتشفك!</p>
-      </div>
-      <div class="footer-links-row">
+  <!-- ===== SIMPLE FOOTER ===== -->
+  <footer class="site-footer" id="site-footer">
+    <div class="footer-inner">
+      <div class="footer-links-row" id="footer-links-row">
         <div class="footer-col">
           <h4>اللعبة</h4>
           <ul>
@@ -406,11 +449,7 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
         </div>
       </div>
     </div>
-    <div class="footer-flicker">
-      <div class="footer-flicker-fade"></div>
-      <canvas id="footer-flicker-canvas"></canvas>
-    </div>
-    <div class="footer-bottom">مين النصاب؟ © 2025 — صُنع بـ ❤️ للعرب</div>
+    <div class="footer-copy" id="footer-copy">مين النصاب؟ © 2025 — صُنع بـ ❤️ للعرب</div>
   </footer>
 </div>
 
@@ -418,14 +457,14 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
 <div id="screen-join" class="screen">
   <header class="site-header">
     <div class="logo">🎭 مين النصاب؟</div>
-    <button class="btn btn-secondary btn-sm" onclick="showScreen('home')">← رجوع</button>
+    <button class="btn btn-secondary btn-sm" onclick="showScreen('home')"><span class="btn-top">← رجوع</span></button>
   </header>
   <div class="join-container">
     <h2>🔑 انضم لغرفة</h2>
     <p>أدخل كود الغرفة من صاحبك</p>
     <div style="margin-bottom:13px"><label>اسمك</label><input id="join-name" type="text" placeholder="اسمك..." maxlength="20"></div>
     <div style="margin-bottom:20px"><label>كود الغرفة</label><input id="join-code" type="text" class="code-input" placeholder="XXXXXX" maxlength="6"></div>
-    <button class="btn btn-primary btn-lg" style="width:100%" onclick="joinRoom()">🚀 انضم الآن</button>
+    <button class="btn btn-primary btn-lg" style="width:100%" onclick="joinRoom()"><span class="btn-top">🚀 انضم الآن</span></button>
   </div>
 </div>
 
@@ -433,7 +472,7 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
 <div id="screen-lobby" class="screen">
   <header class="site-header">
     <div class="logo">🎭 مين النصاب؟</div>
-    <button class="btn btn-secondary btn-sm" onclick="showScreen('home')">← خروج</button>
+    <button class="btn btn-secondary btn-sm" onclick="showScreen('home')"><span class="btn-top">← خروج</span></button>
   </header>
   <div class="lobby-container">
     <div class="lobby-header">
@@ -458,7 +497,7 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
       <div class="players-list" id="players-list"></div>
     </div>
     <div class="waiting-hint" id="waiting-hint">⏳ في انتظار لاعبين...</div>
-    <button class="btn btn-primary btn-lg" id="start-btn" style="width:100%;display:none" onclick="startGame()">🚀 ابدأ اللعبة! (5 جولات)</button>
+    <button class="btn-start" id="start-btn" style="display:none" onclick="startGame()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span class="play-text">ابدأ اللعبة!</span><span class="now-text">🚀 5 جولات</span></button>
   </div>
 </div>
 
@@ -489,7 +528,7 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
       </div>
       <label>إجابتك:</label>
       <textarea id="q-answer-input" rows="3" placeholder="اكتب إجابتك هنا..." maxlength="200"></textarea>
-      <div style="margin-top:12px"><button class="btn btn-primary btn-lg" style="width:100%" onclick="submitQAnswer()">✅ إرسال الإجابة</button></div>
+      <div style="margin-top:12px"><button class="btn btn-primary btn-lg" style="width:100%" onclick="submitQAnswer()"><span class="btn-top">✅ إرسال الإجابة</span></button></div>
     </div>
     <div id="q-phase-reveal" style="display:none">
       <div class="phase-indicator">
@@ -507,7 +546,7 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
       <div style="margin-top:18px">
         <div class="timer-text" id="q-discuss-timer">60</div>
         <p style="text-align:center;color:var(--muted);margin-bottom:12px">🗣️ ناقشوا الإجابات!</p>
-        <button class="btn btn-accent3 btn-lg" style="width:100%" onclick="showVotePhase('question')">🗳️ الانتقال للتصويت</button>
+        <button class="btn btn-accent3 btn-lg" style="width:100%" onclick="showVotePhase('question')"><span class="btn-top">🗳️ الانتقال للتصويت</span></button>
       </div>
     </div>
     <div id="q-phase-vote" style="display:none">
@@ -523,7 +562,7 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
         <p style="color:var(--muted);margin-top:5px">صوّت على الشخص اللي تعتقد إنه المحتال</p>
       </div>
       <div class="answers-grid" id="q-vote-list"></div>
-      <div style="margin-top:16px"><button class="btn btn-accent4 btn-lg" style="width:100%" onclick="submitVote('question')">✅ تأكيد التصويت</button></div>
+      <div style="margin-top:16px"><button class="btn btn-accent4 btn-lg" style="width:100%" onclick="submitVote('question')"><span class="btn-top">✅ تأكيد التصويت</span></button></div>
     </div>
   </div>
 </div>
@@ -552,7 +591,7 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
         <div style="display:flex;align-items:center;gap:9px"><span style="width:30px;height:30px;border-radius:50%;background:#c0c0c0;color:#000;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0">2</span><input id="r-input-2" type="text" placeholder="الثاني..." maxlength="50"></div>
         <div style="display:flex;align-items:center;gap:9px"><span style="width:30px;height:30px;border-radius:50%;background:#cd7f32;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0">3</span><input id="r-input-3" type="text" placeholder="الثالث..." maxlength="50"></div>
       </div>
-      <button class="btn btn-primary btn-lg" style="width:100%" onclick="submitRanking()">✅ إرسال التصنيف</button>
+      <button class="btn btn-primary btn-lg" style="width:100%" onclick="submitRanking()"><span class="btn-top">✅ إرسال التصنيف</span></button>
     </div>
     <div id="r-phase-reveal" style="display:none">
       <div class="card" style="text-align:center;margin-bottom:18px;background:linear-gradient(135deg,rgba(0,212,170,.2),rgba(123,47,247,.1))">
@@ -560,7 +599,7 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
         <div style="font-size:1.15rem;font-weight:700" id="r-reveal-category"></div>
       </div>
       <div id="r-rankings-display"></div>
-      <div style="margin-top:18px"><button class="btn btn-accent4 btn-lg" style="width:100%" onclick="showVotePhase('ranking')">🗳️ التصويت على المحتال</button></div>
+      <div style="margin-top:18px"><button class="btn btn-accent4 btn-lg" style="width:100%" onclick="showVotePhase('ranking')"><span class="btn-top">🗳️ التصويت على المحتال</span></button></div>
     </div>
     <div id="r-phase-vote" style="display:none">
       <div class="card" style="text-align:center;margin-bottom:18px">
@@ -568,7 +607,7 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
         <p style="color:var(--muted);margin-top:5px">اختر اللاعب الذي لم يعرف التفاصيل</p>
       </div>
       <div class="answers-grid" id="r-vote-list"></div>
-      <div style="margin-top:16px"><button class="btn btn-accent4 btn-lg" style="width:100%" onclick="submitVote('ranking')">✅ تأكيد التصويت</button></div>
+      <div style="margin-top:16px"><button class="btn btn-accent4 btn-lg" style="width:100%" onclick="submitVote('ranking')"><span class="btn-top">✅ تأكيد التصويت</span></button></div>
     </div>
   </div>
 </div>
@@ -616,7 +655,7 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
       </div>
       <div id="canvas-wrapper"><canvas id="drawing-canvas" width="760" height="400"></canvas></div>
       <div style="margin-top:12px;text-align:center">
-        <button class="btn btn-accent4 btn-lg" onclick="showVotePhase('drawing')">✅ انتهيت — انتقل للتصويت</button>
+        <button class="btn btn-accent4 btn-lg" onclick="showVotePhase('drawing')"><span class="btn-top">✅ انتهيت — انتقل للتصويت</span></button>
       </div>
     </div>
     <div id="d-phase-vote" style="display:none">
@@ -625,7 +664,7 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
         <p style="color:var(--muted);margin-top:5px">المحتال كانت عنده كلمة مختلفة!</p>
       </div>
       <div class="answers-grid" id="d-vote-list"></div>
-      <div style="margin-top:16px"><button class="btn btn-accent4 btn-lg" style="width:100%" onclick="submitVote('drawing')">✅ تأكيد التصويت</button></div>
+      <div style="margin-top:16px"><button class="btn btn-accent4 btn-lg" style="width:100%" onclick="submitVote('drawing')"><span class="btn-top">✅ تأكيد التصويت</span></button></div>
     </div>
   </div>
 </div>
@@ -671,7 +710,7 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
       <div class="leaderboard" id="rr-lb"></div>
     </div>
 
-    <button class="btn btn-primary btn-lg" style="width:100%" id="rr-next-btn" onclick="nextRound()">▶️ الجولة التالية</button>
+    <button class="btn btn-primary btn-lg" style="width:100%" id="rr-next-btn" onclick="nextRound()"><span class="btn-top">▶️ الجولة التالية</span></button>
   </div>
 </div>
 
@@ -680,7 +719,7 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
   <div class="confetti-area" id="confetti-area"></div>
   <header class="site-header">
     <div class="logo">🏆 الفائز النهائي</div>
-    <button class="btn btn-secondary btn-sm" onclick="showScreen('home')">🏠 الرئيسية</button>
+    <button class="btn btn-secondary btn-sm" onclick="showScreen('home')"><span class="btn-top">🏠 الرئيسية</span></button>
   </header>
   <div class="final-container" style="margin:0 auto">
     <span class="winner-crown">👑</span>
@@ -696,8 +735,8 @@ body.streamer .hide-str{opacity:0!important;pointer-events:none!important;}
     </div>
 
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-      <button class="btn btn-primary btn-lg" onclick="playAgainFull()">🔄 العب مجدداً</button>
-      <button class="btn btn-secondary btn-lg" onclick="showScreen('lobby')">🏠 لوبي</button>
+      <button class="btn btn-primary btn-lg" onclick="playAgainFull()"><span class="btn-top">🔄 العب مجدداً</span></button>
+      <button class="btn btn-secondary btn-lg" onclick="showScreen('lobby')"><span class="btn-top">🏠 لوبي</span></button>
     </div>
   </div>
 </div>
@@ -761,11 +800,9 @@ const DEFAULT_CONFIG = {
   }
 };
 
-// !! ADMIN INJECTED CONFIG !!
-window.__NASSAB_INJECTED__={"siteName":"مين النصاب؟","heroTitle":["مين","النصاب؟"],"heroBadge":"ألعاب جماعية انت واصدقائك - مين النصاب بينكم؟","heroSubtitle":"5 جولات متتالية • نظام نقاط • فائز واحد في النهاية 🏆","heroBtn1":"🎮","heroBtn2":"🔑 انضم لغرفة","games":{"question":{"name":"نسخة الأسئلة","emoji":"❓","image":"","tag":"🧠 كلامي","desc":"الكل يجاوب على نفس السؤال إلا النصاب اللي عنده سؤال مختلف. اكتشفه من إجابته!"},"ranking":{"name":"نسخة التصنيف","emoji":"🏆","image":"","tag":"📊 تصنيف","desc":"رتّب أفضل 3 من فئة معينة! النصاب يعرف الفئة فقط بدون التفاصيل."},"drawing":{"name":"نسخة الرسم","emoji":"🎨","image":"","tag":"✏️ رسم","desc":"الكل يرسم نفس الشيء إلا النصاب! خمّن مين رسم بشكل مختلف."}},"footer":{"desc":"ألعاب جماعية ممتعة للأصدقاء والستريمرز. حاول تكتشف النصاب اللي بينكم!","cols":[{"title":"","links":[]},{"title":"","links":[]},{"title":"","links":[]}],"copy":"مين النصاب؟ © 2026 — صُنع بـ ❤️ لأجل الأوقات المَرحة بين الأصدقاء"},"questions":{"question":[{"n":"ما هو أفضل طعام في نظرك؟","i":"ما هو أفضل مشروب في نظرك؟"},{"n":"لو سافرت الآن أين تذهب؟","i":"لو عندك يوم إجازة ماذا تفعل؟"},{"n":"ما هو أحب الأفلام لديك؟","i":"ما هو أحب المسلسلات لديك؟"},{"n":"صف يومك المثالي","i":"صف إجازتك المثالية"},{"n":"ما الشيء الذي لا تستطيع العيش بدونه؟","i":"ما الشيء الذي تحب اقتناءه؟"},{"n":"لو كنت حيواناً ماذا ستكون؟","i":"لو كنت شخصية تاريخية من ستكون؟"},{"n":"ما هي هوايتك المفضلة؟","i":"ما الرياضة التي تحب ممارستها؟"},{"n":"ما هو أحب الكتب لديك؟","i":"ما هو أحب الأغاني لديك؟"},{"n":"ما الشيء الذي يجعلك تضحك دائماً؟","i":"ما الشيء الذي يجعلك تشعر بالراحة؟"},{"n":"لو كان معك مليون ريال ماذا تفعل؟","i":"لو كان معك أسبوع إجازة مفتوح ماذا تفعل؟"}],"ranking":[{"n":"أفضل 3 مطاعم في مدينتك","i":"أفضل 3 أماكن للترفيه في مدينتك"},{"n":"أفضل 3 لاعبي كرة قدم في العالم","i":"أفضل 3 مدربي كرة قدم في العالم"},{"n":"أفضل 3 أفلام شاهدتها","i":"أفضل 3 مسلسلات شاهدتها"},{"n":"أفضل 3 وجبات على الإفطار","i":"أفضل 3 وجبات على العشاء"},{"n":"أفضل 3 دول للسياحة","i":"أفضل 3 مدن للعيش"},{"n":"أفضل 3 تطبيقات على هاتفك","i":"أفضل 3 مواقع تزورها على النت"},{"n":"أفضل 3 علامات سيارات","i":"أفضل 3 شركات طيران"}],"drawing":[{"n":"ارسم: قطة","i":"ارسم: كلب"},{"n":"ارسم: بيت","i":"ارسم: قصر"},{"n":"ارسم: سيارة","i":"ارسم: دراجة"},{"n":"ارسم: شمس","i":"ارسم: قمر"},{"n":"ارسم: شجرة","i":"ارسم: زهرة"},{"n":"ارسم: سمكة","i":"ارسم: طائر"},{"n":"ارسم: كتاب","i":"ارسم: دفتر"},{"n":"ارسم: هاتف","i":"ارسم: كمبيوتر"}]}};
 function loadSiteConfig(){
   try{
-    const saved=window.__NASSAB_INJECTED__?JSON.stringify(window.__NASSAB_INJECTED__):localStorage.getItem('nassab_config');
+    const saved=localStorage.getItem('nassab_config');
     if(saved) return Object.assign({},DEFAULT_CONFIG,JSON.parse(saved));
   }catch(e){}
   return DEFAULT_CONFIG;
@@ -804,14 +841,10 @@ function applySiteConfig(){
     if(tagEl) tagEl.textContent=gc.tag;
   });
   // Footer
-  const fbDesc=document.querySelector('.footer-brand-desc');
-  if(fbDesc) fbDesc.textContent=cfg.footer.desc;
-  const fbName=document.querySelector('.footer-brand-name');
-  if(fbName) fbName.textContent='🎭 '+cfg.siteName;
-  const fbCopy=document.querySelector('.footer-bottom');
+  const fbCopy=document.getElementById('footer-copy');
   if(fbCopy) fbCopy.textContent=cfg.footer.copy;
   const fcols=document.querySelectorAll('.footer-col');
-  cfg.footer.cols.forEach((col,i)=>{
+  (cfg.footer.cols||[]).forEach((col,i)=>{
     if(!fcols[i])return;
     const h=fcols[i].querySelector('h4');
     if(h) h.textContent=col.title;
@@ -1590,64 +1623,7 @@ document.getElementById('join-code').addEventListener('input',e=>{e.target.value
 // ================================================
 // 4. FLICKERING FOOTER CANVAS
 // ================================================
-(function initFlickerFooter(){
-  const canvas=document.getElementById('footer-flicker-canvas');
-  if(!canvas)return;
-  const ctx=canvas.getContext('2d');
-  const SQ=3,GAP=3,FLICK=0.15,MAX_OP=0.28;
-  let W=0,H=0,cols=0,rows=0,squares=null,raf=null;
 
-  function setup(){
-    const cont=canvas.parentElement;
-    W=cont.clientWidth; H=cont.clientHeight;
-    const dpr=window.devicePixelRatio||1;
-    canvas.width=W*dpr; canvas.height=H*dpr;
-    canvas.style.width=W+'px'; canvas.style.height=H+'px';
-    ctx.scale(dpr,dpr);
-    cols=Math.ceil(W/(SQ+GAP));
-    rows=Math.ceil(H/(SQ+GAP));
-    squares=new Float32Array(cols*rows);
-    for(let i=0;i<squares.length;i++) squares[i]=Math.random()*MAX_OP;
-  }
-
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    // Draw text mask
-    const maskC=document.createElement('canvas');
-    maskC.width=W; maskC.height=H;
-    const mCtx=maskC.getContext('2d',{willReadFrequently:true});
-    mCtx.fillStyle='white';
-    mCtx.font=`900 ${Math.min(W/4,90)}px Tajawal,sans-serif`;
-    mCtx.textAlign='center';
-    mCtx.textBaseline='middle';
-    mCtx.fillText('مين النصاب؟',W/2,H/2);
-
-    for(let i=0;i<cols;i++){
-      for(let j=0;j<rows;j++){
-        const x=i*(SQ+GAP),y=j*(SQ+GAP);
-        const mData=mCtx.getImageData(x,y,SQ,SQ).data;
-        const inText=mData.some((v,k)=>k%4===0&&v>0);
-        let op=squares[i*rows+j];
-        if(inText) op=Math.min(1,op*3+0.45);
-        ctx.fillStyle=`rgba(107,114,128,${op})`;
-        ctx.fillRect(x,y,SQ,SQ);
-      }
-    }
-    // update
-    for(let i=0;i<squares.length;i++){
-      if(Math.random()<FLICK) squares[i]=Math.random()*MAX_OP;
-    }
-    raf=requestAnimationFrame(draw);
-  }
-
-  // Start only when in view
-  const obs=new IntersectionObserver(entries=>{
-    if(entries[0].isIntersecting){setup();draw();}
-    else{cancelAnimationFrame(raf);}
-  },{threshold:0});
-  obs.observe(canvas);
-  window.addEventListener('resize',()=>{if(raf){setup();}});
-})();
 </script>
 </body>
 </html>
