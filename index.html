@@ -4,13 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>مين النصاب؟ - ألعاب جماعية عربية</title>
-<!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, set, get, push, onValue, off, update, remove, serverTimestamp }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-  window.__FB = { initializeApp, getDatabase, ref, set, get, push, onValue, off, update, remove, serverTimestamp };
-</script>
+<!-- Firebase Compat SDK (works as regular script, no modules needed) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -32,7 +28,7 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);min-hei
 .gooey-text1,.gooey-text2{position:absolute;font-family:var(--font-display);font-size:clamp(2.8rem,8vw,5.2rem);font-weight:900;text-align:center;background:linear-gradient(135deg,var(--accent4),var(--accent1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;user-select:none;}
 
 /* ===== GLOW GAME CARDS ===== */
-.game-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;touch-action:none;}
+.game-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;touch-action:manipulation;}
 [data-glow-card]::before,[data-glow-card]::after{pointer-events:none;content:"";position:absolute;inset:calc(var(--gc-border-sz)*-1);border:var(--gc-border-sz) solid transparent;border-radius:20px;background-attachment:fixed;background-size:calc(100% + (2*var(--gc-border-sz))) calc(100% + (2*var(--gc-border-sz)));background-repeat:no-repeat;background-position:50% 50%;mask:linear-gradient(transparent,transparent),linear-gradient(white,white);mask-clip:padding-box,border-box;mask-composite:intersect;}
 [data-glow-card]::before{background-image:radial-gradient(calc(var(--gc-spot)*0.75) calc(var(--gc-spot)*0.75) at calc(var(--gcx,0)*1px) calc(var(--gcy,0)*1px),hsl(var(--gc-hue,210) 100% 50%/var(--gc-bspot,.9)),transparent 100%);filter:brightness(2);}
 [data-glow-card]::after{background-image:radial-gradient(calc(var(--gc-spot)*.5) calc(var(--gc-spot)*.5) at calc(var(--gcx,0)*1px) calc(var(--gcy,0)*1px),hsl(0 100% 100%/var(--gc-blight,.7)),transparent 100%);}
@@ -781,11 +777,9 @@ const DEFAULT_CONFIG = {
   }
 };
 
-// !! ADMIN INJECTED CONFIG !!
-window.__NASSAB_INJECTED__={"siteName":"مين النصاب؟","heroTitle":["مين","النصاب؟"],"heroBadge":"ألعاب جماعية انت واصدقائك - مين النصاب بينكم؟","heroSubtitle":"5 جولات متتالية • نظام نقاط • فائز واحد في النهاية 🏆","heroBtn1":"🎮","heroBtn2":"🔑 انضم لغرفة","games":{"question":{"name":"نسخة الأسئلة","emoji":"❓","image":"","tag":"🧠 كلامي","desc":"الكل يجاوب على نفس السؤال إلا النصاب اللي عنده سؤال مختلف. اكتشفه من إجابته!"},"ranking":{"name":"نسخة التصنيف","emoji":"🏆","image":"","tag":"📊 تصنيف","desc":"رتّب أفضل 3 من فئة معينة! النصاب يعرف الفئة فقط بدون التفاصيل."},"drawing":{"name":"نسخة الرسم","emoji":"🎨","image":"","tag":"✏️ رسم","desc":"الكل يرسم نفس الشيء إلا النصاب! خمّن مين رسم بشكل مختلف."}},"footer":{"desc":"","cols":[{"title":"","links":[]},{"title":"","links":[]},{"title":"","links":[]}],"copy":"مين النصاب؟ © 2026 — صُنع بـ ❤️ لأجل الأوقات المَرحة بين الأصدقاء","links":[{"t":"Ko-fi","u":"https://ko-fi.com/i3zuu"}]},"questions":{"question":[{"n":"ما هو أفضل طعام في نظرك؟","i":"ما هو أفضل مشروب في نظرك؟"},{"n":"لو سافرت الآن أين تذهب؟","i":"لو عندك يوم إجازة ماذا تفعل؟"},{"n":"ما هو أحب الأفلام لديك؟","i":"ما هو أحب المسلسلات لديك؟"},{"n":"صف يومك المثالي","i":"صف إجازتك المثالية"},{"n":"ما الشيء الذي لا تستطيع العيش بدونه؟","i":"ما الشيء الذي تحب اقتناءه؟"},{"n":"لو كنت حيواناً ماذا ستكون؟","i":"لو كنت شخصية تاريخية من ستكون؟"},{"n":"ما هي هوايتك المفضلة؟","i":"ما الرياضة التي تحب ممارستها؟"},{"n":"ما هو أحب الكتب لديك؟","i":"ما هو أحب الأغاني لديك؟"},{"n":"ما الشيء الذي يجعلك تضحك دائماً؟","i":"ما الشيء الذي يجعلك تشعر بالراحة؟"},{"n":"لو كان معك مليون ريال ماذا تفعل؟","i":"لو كان معك أسبوع إجازة مفتوح ماذا تفعل؟"}],"ranking":[{"n":"أفضل 3 مطاعم في مدينتك","i":"أفضل 3 أماكن للترفيه في مدينتك"},{"n":"أفضل 3 لاعبي كرة قدم في العالم","i":"أفضل 3 مدربي كرة قدم في العالم"},{"n":"أفضل 3 أفلام شاهدتها","i":"أفضل 3 مسلسلات شاهدتها"},{"n":"أفضل 3 وجبات على الإفطار","i":"أفضل 3 وجبات على العشاء"},{"n":"أفضل 3 دول للسياحة","i":"أفضل 3 مدن للعيش"},{"n":"أفضل 3 تطبيقات على هاتفك","i":"أفضل 3 مواقع تزورها على النت"},{"n":"أفضل 3 علامات سيارات","i":"أفضل 3 شركات طيران"}],"drawing":[{"n":"ارسم: قطة","i":"ارسم: كلب"},{"n":"ارسم: بيت","i":"ارسم: قصر"},{"n":"ارسم: سيارة","i":"ارسم: دراجة"},{"n":"ارسم: شمس","i":"ارسم: قمر"},{"n":"ارسم: شجرة","i":"ارسم: زهرة"},{"n":"ارسم: سمكة","i":"ارسم: طائر"},{"n":"ارسم: كتاب","i":"ارسم: دفتر"},{"n":"ارسم: هاتف","i":"ارسم: كمبيوتر"}]}};
 function loadSiteConfig(){
   try{
-    const saved=window.__NASSAB_INJECTED__?JSON.stringify(window.__NASSAB_INJECTED__):localStorage.getItem('nassab_config');
+    const saved=localStorage.getItem('nassab_config');
     if(saved) return Object.assign({},DEFAULT_CONFIG,JSON.parse(saved));
   }catch(e){}
   return DEFAULT_CONFIG;
@@ -912,53 +906,51 @@ window.addEventListener('load',()=>{
 });
 
 // ================================================
-// FIREBASE REALTIME MULTIPLAYER
+// FIREBASE REALTIME MULTIPLAYER (Compat SDK)
 // ================================================
-let DB = null;         // Firebase database instance
-let _roomRef = null;   // Reference to current room
-let _unsubscribers = []; // Cleanup listeners
+let _fbApp = null;
+let _fbDB = null;
+let _roomListeners = []; // {ref, callback} pairs to remove on cleanup
 
-// Initialize Firebase with PUBLIC demo project (users must set their own)
-async function initFirebase(){
-  if(DB) return DB;
-  // !! استبدل هذه القيم بإعدادات Firebase الخاصة بك من console.firebase.google.com !!
-  const savedCfg = localStorage.getItem('nassab_fb_config');
-  const FB_CONFIG = savedCfg ? JSON.parse(savedCfg) : {
-    apiKey: "AIzaSyDemo-ReplaceWithYourOwnFirebaseKey",
-    authDomain: "nassab-game.firebaseapp.com",
-    databaseURL: "https://nassab-game-default-rtdb.firebaseio.com",
-    projectId: "nassab-game",
-    storageBucket: "nassab-game.appspot.com",
-    messagingSenderId: "000000000000",
-    appId: "1:000000000000:web:0000000000000000000000"
-  };
-  try {
-    const fb = window.__FB;
-    if(!fb) throw new Error('Firebase not loaded');
-    const app = fb.initializeApp(FB_CONFIG, 'nassab-'+Date.now());
-    DB = fb.getDatabase(app);
-    return DB;
-  } catch(e) {
-    // Fallback to local mode if Firebase not configured
-    console.warn('Firebase not configured, running in local mode:', e.message);
+function initFirebase(){
+  if(_fbDB) return _fbDB;
+  try{
+    const savedCfg = localStorage.getItem('nassab_fb_config');
+    if(!savedCfg) return null;
+    const cfg = JSON.parse(savedCfg);
+    if(!cfg.apiKey || !cfg.databaseURL) return null;
+    // Use compat SDK - works like regular JS
+    if(!firebase.apps.length){
+      _fbApp = firebase.initializeApp(cfg);
+    } else {
+      _fbApp = firebase.apps[0];
+    }
+    _fbDB = firebase.database();
+    return _fbDB;
+  }catch(e){
+    console.warn('Firebase init failed:', e.message);
     return null;
   }
 }
 
-function roomRef(path=''){
-  if(!DB || !G.roomCode) return null;
-  const fb = window.__FB;
-  return fb.ref(DB, 'rooms/' + G.roomCode + (path?'/'+path:''));
+function roomRef(path){
+  if(!_fbDB || !G.roomCode) return null;
+  const fullPath = 'rooms/' + G.roomCode + (path ? '/'+path : '');
+  return _fbDB.ref(fullPath);
 }
 
 function myId(){ return G.playerId || 'me'; }
 
-// Cleanup all Firebase listeners when leaving room
 function cleanupRoom(){
-  const fb = window.__FB;
-  if(fb) _unsubscribers.forEach(u=>{ try{u();}catch(e){} });
-  _unsubscribers=[];
-  _roomRef=null;
+  _roomListeners.forEach(({r,cb})=>{ try{ r.off('value',cb); }catch(e){} });
+  _roomListeners=[];
+}
+
+function fbListen(path, cb){
+  const r = roomRef(path);
+  if(!r) return;
+  r.on('value', cb);
+  _roomListeners.push({r,cb});
 }
 
 // ================================================
@@ -980,17 +972,16 @@ async function createRoom(){
   showScreen('lobby');
 
   // Try Firebase
-  const db = await initFirebase();
+  const db = initFirebase();
   if(db){
-    const fb = window.__FB;
     const me = G.players[0];
     // Write room state
-    await fb.set(roomRef(), {
+    await roomRef().set({
       code: G.roomCode,
       game: G.selectedGame,
       phase: 'lobby',
       host: G.playerId,
-      createdAt: fb.serverTimestamp(),
+      createdAt: firebase.database.ServerValue.TIMESTAMP,
       players: {
         [G.playerId]: {
           id: G.playerId, name: me.name, avatar: me.avatar,
@@ -1014,12 +1005,10 @@ function simJoin(){ /* Real multiplayer only */ }
 
 // Listen to room changes in Firebase
 function listenRoom(){
-  if(!DB || !G.roomCode) return;
-  const fb = window.__FB;
-  
+  if(!_fbDB || !G.roomCode) return;
+
   // Listen to players joining/leaving
-  const playersRef = roomRef('players');
-  const unsubPlayers = fb.onValue(playersRef, snap => {
+  fbListen('players', snap => {
     if(!snap.exists()) return;
     const data = snap.val();
     // Rebuild players list from Firebase
@@ -1038,16 +1027,15 @@ function listenRoom(){
     }));
     syncLobby();
   });
-  _unsubscribers.push(()=>fb.off(playersRef));
 
-  // Listen to game phase changes (host triggers start)
-  const phaseRef = roomRef('phase');
-  const unsubPhase = fb.onValue(phaseRef, snap => {
+
+  // Listen to game phase
+  fbListen('phase', snap => {
     if(!snap.exists()) return;
     const phase = snap.val();
     if(phase === 'starting' && !G.isHost){
       // Non-host: read game config from Firebase and start
-      fb.get(roomRef('roundData')).then(rdSnap => {
+      roomRef('roundData').once('value').then(rdSnap => {
         if(!rdSnap.exists()) return;
         const rd = rdSnap.val();
         G.selectedGame = rd.game;
@@ -1062,11 +1050,10 @@ function listenRoom(){
       });
     }
   });
-  _unsubscribers.push(()=>fb.off(phaseRef));
 
-  // Listen for answers submitted by others
-  const answersRef = roomRef('answers');
-  const unsubAnswers = fb.onValue(answersRef, snap => {
+
+  // Listen for answers
+  fbListen('answers', snap => {
     if(!snap.exists()) return;
     const data = snap.val();
     // Merge into G.answers
@@ -1083,11 +1070,10 @@ function listenRoom(){
       showQReveal();
     }
   });
-  _unsubscribers.push(()=>fb.off(answersRef));
+
 
   // Listen for votes
-  const votesRef = roomRef('votes');
-  const unsubVotes = fb.onValue(votesRef, snap => {
+  fbListen('votes', snap => {
     if(!snap.exists()) return;
     const data = snap.val();
     if(G.isHost && Object.keys(data).length >= G.players.length){
@@ -1096,11 +1082,10 @@ function listenRoom(){
       resolveRoundFromVotes(data);
     }
   });
-  _unsubscribers.push(()=>fb.off(votesRef));
 
-  // Listen for round result broadcast
-  const resultRef = roomRef('roundResult');
-  const unsubResult = fb.onValue(resultRef, snap => {
+
+  // Listen for round result
+  fbListen('roundResult', snap => {
     if(!snap.exists() || G.isHost) return;
     const rd = snap.val();
     if(rd.round !== G.currentRound) return;
@@ -1119,15 +1104,14 @@ function listenRoom(){
     });
     showRoundResultScreen(rd.result);
   });
-  _unsubscribers.push(()=>fb.off(resultRef));
 
-  // Listen for next round trigger
-  const nextRef = roomRef('nextRound');
-  const unsubNext = fb.onValue(nextRef, snap => {
+
+  // Listen for next round
+  fbListen('nextRound', snap => {
     if(!snap.exists() || G.isHost) return;
     G.currentRound = snap.val();
     if(G.currentRound > TOTAL_ROUNDS){ showFinalScreen(); return; }
-    fb.get(roomRef('roundData')).then(rdSnap => {
+    roomRef('roundData').once('value').then(rdSnap => {
       if(!rdSnap.exists()) return;
       const rd = rdSnap.val();
       G.currentQuestion = rd.question;
@@ -1139,7 +1123,7 @@ function listenRoom(){
       else startDRound(true);
     });
   });
-  _unsubscribers.push(()=>fb.off(nextRef));
+
 }
 
 function selectLobbyGame(g,el){
@@ -1150,7 +1134,7 @@ function selectLobbyGame(g,el){
   const titles={question:'نسخة الأسئلة',ranking:'نسخة التصنيف',drawing:'نسخة الرسم'};
   document.getElementById('lobby-game-icon').textContent=icons[g];
   document.getElementById('lobby-game-title').textContent=titles[g];
-  if(DB && G.isHost){ const fb=window.__FB; fb.update(roomRef(),{game:g}); }
+  if(_fbDB && G.isHost){ roomRef().update({game:g}); }
 }
 
 function syncLobby(){
@@ -1184,11 +1168,10 @@ async function joinRoom(){
   G.usedQIdx={question:[],ranking:[],drawing:[]};G.roundHistory=[];
   G.playerId='p_'+Date.now()+'_'+Math.random().toString(36).substr(2,4);
 
-  const db=await initFirebase();
+  const db=initFirebase();
   if(db){
-    const fb=window.__FB;
     // Verify room exists
-    const snap=await fb.get(roomRef());
+    const snap=await roomRef().once('value');
     if(!snap.exists()){
       notify('❌ الغرفة غير موجودة! تحقق من الكود');
       return;
@@ -1199,7 +1182,7 @@ async function joinRoom(){
     const pIdx=Object.keys(roomData.players||{}).length;
     const ava=AVATARS[pIdx%AVATARS.length];
     const col=COLORS[pIdx%COLORS.length];
-    await fb.update(roomRef('players/'+G.playerId),{
+    await roomRef('players/'+G.playerId).update({
       id:G.playerId,name:G.playerName,avatar:ava,color:col,
       isHost:false,score:0,online:true
     });
@@ -1228,11 +1211,10 @@ async function startGame(){
   G.usedQIdx={question:[],ranking:[],drawing:[]};
   G.roundHistory=[];
   // Push score resets to Firebase
-  if(DB){
-    const fb=window.__FB;
+  if(_fbDB){
     const scoreUpdates={};
     G.players.forEach(p=>{ scoreUpdates['players/'+p.id+'/score']=0; scoreUpdates['players/'+p.id+'/roundScores']=[]; });
-    await fb.update(roomRef(),scoreUpdates);
+    await roomRef().update(scoreUpdates);
   }
   nextRound();
 }
@@ -1240,7 +1222,7 @@ async function startGame(){
 async function nextRound(){
   G.currentRound++;
   if(G.currentRound>TOTAL_ROUNDS){
-    if(DB){ const fb=window.__FB; await fb.update(roomRef(),{phase:'final',nextRound:G.currentRound}); }
+    if(_fbDB){ await roomRef().update({phase:'final',nextRound:G.currentRound}); }
     showFinalScreen();return;
   }
   G.myVote=null;G.answers={};G.rankings={};
@@ -1261,10 +1243,9 @@ async function nextRound(){
   // Am I the imposter?
   G.isImposter=(G.playerId===imposterId)||(G.isHost&&G.playerId===imposterId);
 
-  if(DB){
-    const fb=window.__FB;
+  if(_fbDB){
     // Broadcast round data to all players
-    await fb.update(roomRef(),{
+    await roomRef().update({
       phase:'starting',
       nextRound:G.currentRound,
       answers:{},votes:{},roundResult:{},
@@ -1335,9 +1316,8 @@ async function submitQAnswer(){
   const me=G.players.find(p=>p.isMe)||G.players[0];
   G.answers[G.playerId]={name:G.playerName,text:a,avatar:me.avatar,color:me.color};
   notify('✅ تم إرسال إجابتك!');emojiBurst('✅');
-  if(DB){
-    const fb=window.__FB;
-    await fb.update(roomRef('answers/'+G.playerId),{name:G.playerName,text:a,avatar:me.avatar,color:me.color});
+  if(_fbDB){
+    await roomRef('answers/'+G.playerId).update({name:G.playerName,text:a,avatar:me.avatar,color:me.color});
     // Show waiting state
     document.getElementById('q-submitted-count').textContent=Object.keys(G.answers).length;
     if(G.isHost && Object.keys(G.answers).length>=G.players.length){ clearTimer();showQReveal(); }
@@ -1467,15 +1447,13 @@ function showVotePhase(game){
 async function submitVote(game){
   if(!G.myVote){notify('⚠️ اختر لاعباً للتصويت عليه!');return;}
   clearTimer();
-  if(DB){
-    const fb=window.__FB;
-    await fb.update(roomRef('votes/'+G.playerId),{votedFor:G.myVote});
+  if(_fbDB){
+    await roomRef('votes/'+G.playerId).update({votedFor:G.myVote});
     notify('✅ تم تسجيل صوتك!');
     // Host resolves when all votes are in (via listener)
     // Non-host just waits
     if(G.isHost){
-      // Check if all voted
-      const snap=await fb.get(roomRef('votes'));
+      const snap=await roomRef('votes').once('value');
       if(snap.exists()&&Object.keys(snap.val()).length>=G.players.length){
         resolveRoundFromVotes(snap.val());
       }
@@ -1571,19 +1549,21 @@ async function resolveRoundWithTally(tally){
 
   const resultPayload={caught,aiImposter:{id:aiImposter.id,name:aiImposter.name,avatar:aiImposter.avatar},tally,sorted,delta,round:G.currentRound};
   
-  if(DB && G.isHost){
+  if(_fbDB && G.isHost){
     // Broadcast scores and result to all players
-    const fb=window.__FB;
     const scoreUpdates={};
     G.players.forEach(p=>{
       scoreUpdates['players/'+p.id+'/score']=p.score;
       scoreUpdates['players/'+p.id+'/roundScores']=p.roundScores;
     });
-    await fb.update(roomRef(),{
-      ...scoreUpdates,
+    await roomRef().update({
       phase:'round_result',
       roundResult:{
-        ...resultPayload,
+        caught:resultPayload.caught,
+        aiImposter:resultPayload.aiImposter,
+        sorted:resultPayload.sorted,
+        delta:resultPayload.delta,
+        round:resultPayload.round,
         scores:Object.fromEntries(G.players.map(p=>[p.id,{score:p.score,roundScores:p.roundScores}]))
       }
     });

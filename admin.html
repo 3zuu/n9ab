@@ -670,6 +670,7 @@ const DEFAULT = {
 // ================================================
 let CFG = deepClone(DEFAULT);
 let dirty = false;
+let _loading = false; // Prevent markDirty during initial load
 
 function deepClone(o){return JSON.parse(JSON.stringify(o));}
 
@@ -682,10 +683,13 @@ window.addEventListener('load',()=>{
     try{ CFG=Object.assign(deepClone(DEFAULT),JSON.parse(saved)); }catch(e){}
   }
   populateAll();
+  _loading=false;
   updateStats();
+  loadFbConfig();
 });
 
 function populateAll(){
+  _loading=true;
   // Site
   v('cfg-siteName',CFG.siteName);
   v('cfg-heroWords',(CFG.heroTitle||[]).join('\n'));
@@ -707,6 +711,7 @@ function populateAll(){
   // Footer
   v('cfg-footer-copy',CFG.footer.copy);
   renderFooterLinks();
+  _loading=false;
   // Questions
   ['question','ranking','drawing'].forEach(renderQList);
 }
@@ -728,6 +733,7 @@ function goPage(id,el){
 // DIRTY STATE
 // ================================================
 function markDirty(){
+  if(_loading) return;
   dirty=true;
   document.getElementById('unsaved-badge').classList.add('show');
 }
@@ -1100,15 +1106,13 @@ function showFbStatus(msg,type){
 }
 
 // Load Firebase config on init
-window.addEventListener('load',()=>{
-  loadFbConfig();
-});
+// Firebase config loaded in main load handler above
 
 window.addEventListener('beforeunload',e=>{
   if(dirty){e.preventDefault();e.returnValue='';}
 });
 
-// Auto-mark dirty on any input
+// Auto-mark dirty on any input (guarded by _loading flag)
 document.addEventListener('input',()=>markDirty());
 </script>
 </body>
