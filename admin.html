@@ -162,6 +162,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
     <div class="nav-group">أدوات</div>
     <div class="nav-item" onclick="goPage('export',this)"><span class="ic">💾</span> التصدير والحفظ</div>
+    <div class="nav-item" onclick="goPage('firebase',this)"><span class="ic">🔥</span> إعداد Firebase</div>
     <div class="nav-item" onclick="goPage('github',this)"><span class="ic">🚀</span> رفع على GitHub</div>
   </div>
   <div class="sidebar-bottom">
@@ -368,8 +369,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   </div>
 
   <div class="panel">
-    <div class="panel-title"><div class="dot dot-g"></div>أعمدة الروابط</div>
-    <div id="footer-cols-editor"></div>
+    <div class="panel-title"><div class="dot dot-g"></div>روابط الفوتر</div>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px;line-height:1.7">
+      يمكنك إضافة روابط سريعة تظهر في الفوتر. كل رابط يحتاج اسم ورابط URL.
+    </p>
+    <div id="footer-links-list"></div>
+    <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="addFooterLink2()">+ إضافة رابط</button>
   </div>
 </div>
 
@@ -500,6 +505,101 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   </div>
 </div>
 
+
+<!-- ===== FIREBASE ===== -->
+<div class="page" id="page-firebase">
+  <div class="page-header" style="margin-top:20px">
+    <h2>🔥 إعداد Firebase للمزامنة الحقيقية</h2>
+    <p>اجعل أصدقاءك يلعبون معك من أي مكان في العالم</p>
+  </div>
+
+  <div class="panel" style="border-color:rgba(255,160,0,.3);background:rgba(255,160,0,.05)">
+    <div class="panel-title">⚡ Firebase مجاني 100% للألعاب</div>
+    <p style="font-size:.88rem;color:var(--muted);line-height:1.8">
+      Firebase Realtime Database من Google مجاني تماماً للاستخدام الشخصي والمتوسط.
+      يتيح لك مزامنة اللاعبين والإجابات والتصويت في الوقت الفعلي بدون سيرفر.
+    </p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><div class="dot dot-s"></div>الخطوات (5 دقائق فقط)</div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="background:var(--card2);border-radius:12px;padding:14px">
+        <div style="font-weight:700;color:var(--accent4);margin-bottom:6px">1️⃣ إنشاء مشروع Firebase</div>
+        <p style="font-size:.84rem;color:var(--muted);line-height:1.7">اذهب إلى <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent3)">console.firebase.google.com</a> ← اضغط "إضافة مشروع" ← اختر اسم ← تابع.</p>
+      </div>
+      <div style="background:var(--card2);border-radius:12px;padding:14px">
+        <div style="font-weight:700;color:var(--accent4);margin-bottom:6px">2️⃣ تفعيل Realtime Database</div>
+        <p style="font-size:.84rem;color:var(--muted);line-height:1.7">من القائمة الجانبية ← Build ← Realtime Database ← Create Database ← اختر منطقة ← ابدأ بـ "test mode".</p>
+      </div>
+      <div style="background:var(--card2);border-radius:12px;padding:14px">
+        <div style="font-weight:700;color:var(--accent4);margin-bottom:6px">3️⃣ إضافة تطبيق Web</div>
+        <p style="font-size:.84rem;color:var(--muted);line-height:1.7">من Project Overview ← اضغط أيقونة &lt;/&gt; ← اسجّل التطبيق ← ستظهر لك إعدادات الاتصال (firebaseConfig).</p>
+      </div>
+      <div style="background:var(--card2);border-radius:12px;padding:14px">
+        <div style="font-weight:700;color:var(--accent3);margin-bottom:6px">4️⃣ أدخل الإعدادات هنا 👇</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><div class="dot dot-s"></div>إعدادات Firebase الخاصة بك</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>API Key</label>
+        <input id="fb-apiKey" type="text" placeholder="AIzaSy..." oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Database URL</label>
+        <input id="fb-databaseURL" type="text" placeholder="https://your-project-default-rtdb.firebaseio.com" oninput="markDirty()">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Project ID</label>
+        <input id="fb-projectId" type="text" placeholder="your-project-id" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Auth Domain</label>
+        <input id="fb-authDomain" type="text" placeholder="your-project.firebaseapp.com" oninput="markDirty()">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>App ID</label>
+        <input id="fb-appId" type="text" placeholder="1:xxx:web:xxx" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Messaging Sender ID</label>
+        <input id="fb-messagingSenderId" type="text" placeholder="000000000000" oninput="markDirty()">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-success" onclick="saveFirebaseConfig()">🔥 حفظ إعدادات Firebase</button>
+      <button class="btn btn-ghost" onclick="testFirebase()">🧪 اختبار الاتصال</button>
+      <button class="btn btn-danger" onclick="clearFirebaseConfig()">🗑️ مسح الإعدادات</button>
+    </div>
+    <div id="fb-status" style="margin-top:12px;font-size:.85rem;display:none"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">📋 قواعد الأمان (Realtime Database Rules)</div>
+    <p style="font-size:.84rem;color:var(--muted);margin-bottom:10px">انسخ هذه القواعد في Firebase Console ← Realtime Database ← Rules</p>
+    <div style="background:var(--surface);border-radius:10px;padding:14px;font-family:monospace;font-size:.82rem;color:var(--accent3);direction:ltr;text-align:left">
+{<br>
+&nbsp;&nbsp;"rules": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"rooms": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"$roomId": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".read": true,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".write": true<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;}<br>
+}
+    </div>
+    <p style="font-size:.78rem;color:var(--muted);margin-top:8px">⚠️ هذه القواعد للتطوير — للإنتاج أضف مصادقة مستخدمين</p>
+  </div>
+</div>
 </main>
 </div>
 
@@ -606,7 +706,7 @@ function populateAll(){
   });
   // Footer
   v('cfg-footer-copy',CFG.footer.copy);
-  renderFooterCols();
+  renderFooterLinks();
   // Questions
   ['question','ranking','drawing'].forEach(renderQList);
 }
@@ -710,11 +810,11 @@ function renderFooterCols(){
 
 function addFooterLink(ci){
   CFG.footer.cols[ci].links.push({t:'',u:'#'});
-  renderFooterCols();markDirty();
+  renderFooterLinks();markDirty();
 }
 function delFooterLink(ci,li){
   CFG.footer.cols[ci].links.splice(li,1);
-  renderFooterCols();markDirty();
+  renderFooterLinks();markDirty();
 }
 
 // ================================================
@@ -902,6 +1002,108 @@ function toast(msg,type='ok'){
 // ================================================
 // WARN UNSAVED
 // ================================================
+
+// ================================================
+// SIMPLE FOOTER LINKS
+// ================================================
+function renderFooterLinks(){
+  const el=document.getElementById('footer-links-list');
+  if(!el)return;
+  const links=CFG.footer.links||[];
+  el.innerHTML=links.map((l,i)=>`
+    <div class="footer-link-row" style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center">
+      <input value="${esc(l.t)}" placeholder="اسم الرابط" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:.84rem;padding:7px 10px;direction:rtl" oninput="CFG.footer.links[${i}].t=this.value;markDirty()">
+      <input value="${esc(l.u)}" placeholder="https://..." style="background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:.84rem;padding:7px 10px;direction:ltr" oninput="CFG.footer.links[${i}].u=this.value;markDirty()">
+      <button class="q-del" onclick="delFooterLink2(${i})">🗑️</button>
+    </div>
+  `).join('');
+}
+function addFooterLink2(){
+  if(!CFG.footer.links) CFG.footer.links=[];
+  CFG.footer.links.push({t:'',u:'#'});
+  renderFooterLinks();markDirty();
+}
+function delFooterLink2(i){
+  CFG.footer.links.splice(i,1);
+  renderFooterLinks();markDirty();
+}
+
+
+// ================================================
+// FIREBASE CONFIG ADMIN
+// ================================================
+function loadFbConfig(){
+  const saved=localStorage.getItem('nassab_fb_config');
+  if(saved){
+    try{
+      const c=JSON.parse(saved);
+      const fields=['apiKey','databaseURL','projectId','authDomain','appId','messagingSenderId'];
+      fields.forEach(f=>{ const el=document.getElementById('fb-'+f); if(el&&c[f]) el.value=c[f]; });
+    }catch(e){}
+  }
+}
+
+function saveFirebaseConfig(){
+  const cfg={
+    apiKey: document.getElementById('fb-apiKey').value.trim(),
+    databaseURL: document.getElementById('fb-databaseURL').value.trim(),
+    projectId: document.getElementById('fb-projectId').value.trim(),
+    authDomain: document.getElementById('fb-authDomain').value.trim(),
+    appId: document.getElementById('fb-appId').value.trim(),
+    messagingSenderId: document.getElementById('fb-messagingSenderId').value.trim(),
+    storageBucket: document.getElementById('fb-projectId').value.trim()+'.appspot.com'
+  };
+  if(!cfg.apiKey||!cfg.databaseURL){toast('⚠️ أدخل API Key و Database URL على الأقل','err');return;}
+  localStorage.setItem('nassab_fb_config', JSON.stringify(cfg));
+  toast('🔥 تم حفظ إعدادات Firebase!','ok');
+  showFbStatus('✅ تم الحفظ — شارك index.html مع أصدقائك ليلعبوا معك!','ok');
+}
+
+function clearFirebaseConfig(){
+  if(!confirm('هل تريد مسح إعدادات Firebase؟')) return;
+  localStorage.removeItem('nassab_fb_config');
+  ['apiKey','databaseURL','projectId','authDomain','appId','messagingSenderId'].forEach(f=>{
+    const el=document.getElementById('fb-'+f); if(el) el.value='';
+  });
+  toast('🗑️ تم مسح إعدادات Firebase','ok');
+}
+
+async function testFirebase(){
+  const cfg={
+    apiKey: document.getElementById('fb-apiKey').value.trim(),
+    databaseURL: document.getElementById('fb-databaseURL').value.trim(),
+    projectId: document.getElementById('fb-projectId').value.trim(),
+    authDomain: document.getElementById('fb-authDomain').value.trim(),
+    appId: document.getElementById('fb-appId').value.trim(),
+  };
+  if(!cfg.apiKey||!cfg.databaseURL){toast('⚠️ أدخل الإعدادات أولاً','err');return;}
+  showFbStatus('⏳ جاري اختبار الاتصال...','info');
+  try{
+    const resp = await fetch(cfg.databaseURL+'/.json?timeout=5s');
+    if(resp.ok||resp.status===401){
+      showFbStatus('✅ الاتصال بـ Firebase يعمل بنجاح! 🎉','ok');
+      toast('✅ Firebase متصل!','ok');
+    } else {
+      showFbStatus('❌ خطأ في الاتصال: '+resp.status,'err');
+    }
+  }catch(e){
+    showFbStatus('❌ تعذّر الاتصال: '+e.message,'err');
+  }
+}
+
+function showFbStatus(msg,type){
+  const el=document.getElementById('fb-status');
+  if(!el)return;
+  el.style.display='block';
+  el.style.color=type==='ok'?'var(--accent3)':type==='err'?'var(--danger)':'var(--muted)';
+  el.textContent=msg;
+}
+
+// Load Firebase config on init
+window.addEventListener('load',()=>{
+  loadFbConfig();
+});
+
 window.addEventListener('beforeunload',e=>{
   if(dirty){e.preventDefault();e.returnValue='';}
 });
