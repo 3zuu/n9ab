@@ -922,35 +922,43 @@ function updateStats(){
 // ================================================
 // EXPORT HTML — injects config into index.html
 // ================================================
-async function exportHTML(){
+function exportHTML(){
   saveAll();
-  const cfg=collectConfig();
-  // We'll fetch the current index.html and inject config
-  try{
-    const resp=await fetch('index.html');
-    let html=await resp.text();
-    // Replace the nassab_config in localStorage call with a direct injection
-    const cfgJSON=JSON.stringify(cfg);
-    // Inject config right after <script> start in the game JS
-    const marker='const DEFAULT_CONFIG = {';
-    const injectBlock=`// !! ADMIN INJECTED CONFIG !!\nwindow.__NASSAB_INJECTED__=${cfgJSON};\n`;
-    // If already injected, replace it
-    if(html.includes('__NASSAB_INJECTED__')){
-      html=html.replace(/\/\/ !! ADMIN INJECTED CONFIG !!\nwindow\.__NASSAB_INJECTED__=.*?;\n/,'');
-    }
-    // Inject before loadSiteConfig function
-    html=html.replace('function loadSiteConfig(){',injectBlock+'function loadSiteConfig(){');
-    // Also update loadSiteConfig to check window.__NASSAB_INJECTED__
-    html=html.replace(
-      "const saved=localStorage.getItem('nassab_config');",
-      "const saved=window.__NASSAB_INJECTED__?JSON.stringify(window.__NASSAB_INJECTED__):localStorage.getItem('nassab_config');"
-    );
-    download('index.html',html,'text/html');
-    toast('✅ تم تصدير index.html!','ok');
-  }catch(e){
-    // Fallback: just save config to localStorage and tell user
-    toast('⚠️ تعذّر تحميل index.html — تأكد من أن الملفين في نفس المجلد','err');
-  }
+  const cfg = collectConfig();
+  // Read the template index.html
+  fetch('index.html')
+    .then(r => {
+      if(!r.ok) throw new Error('Cannot fetch index.html - make sure both files are in the same folder');
+      return r.text();
+    })
+    .then(tmpl => {
+      // Inject the config by replacing the DEF constant
+      const cfgStr = JSON.stringify(cfg, null, 0);
+      // Find and replace the DEF object in the JS
+      const marker = 'const DEF={siteName:';
+      const markerEnd = '};\nfunction getCfg';
+      if(tmpl.includes(marker)){
+        const start = tmpl.indexOf(marker);
+        const end = tmpl.indexOf(';
+function getCfg', start) + 1;
+        // Build new DEF
+        const newDef = `const DEF=${cfgStr}`;
+        const newHtml = tmpl.substring(0, start) + newDef + tmpl.substring(end);
+        download('index.html', newHtml, 'text/html');
+        toast('✅ تم تصدير index.html مع الإعدادات!', 'ok');
+      } else {
+        // Fallback: inject as override script
+        const inject = `<script>\nwindow.addEventListener('load',function(){\nvar _c=${cfgStr};\nif(window.applyCfgOverride)window.applyCfgOverride(_c);\n});\n</scr` + `ipt>\n`;
+        const newHtml = tmpl.replace('</body>', inject + '</body>');
+        download('index.html', newHtml, 'text/html');
+        toast('✅ تم تصدير index.html!', 'ok');
+      }
+    })
+    .catch(e => {
+      // If fetch fails (file:// protocol), just save config and tell user
+      toast('⚠️ افتح لوحة التحكم من خلال الموقع المرفوع (Vercel/GitHub) لتصدير الملف. الإعدادات محفوظة محلياً.', 'err');
+      console.error(e);
+    });
 }
 
 function exportJSON(){
